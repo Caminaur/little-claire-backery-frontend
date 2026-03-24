@@ -6,7 +6,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold mb-1" style={{ color: 'var(--coffee)' }}>Dashboard</h1>
+      <h1 className="font-display text-3xl font-semibold mb-1 mt-2" style={{ color: 'var(--coffee)' }}>Dashboard</h1>
       <p className="text-sm mb-8" style={{ color: 'var(--muted)' }}>Bienvenido, {user?.email}</p>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {[

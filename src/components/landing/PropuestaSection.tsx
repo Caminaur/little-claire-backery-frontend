@@ -1,3 +1,5 @@
+import { useInView } from '@/hooks/useInView'
+
 const items = [
   {
     title: 'Café',
@@ -18,30 +20,33 @@ const items = [
 ]
 
 export default function PropuestaSection() {
+  const topRef = useInView()
+  const gridRef = useInView()
+
   return (
     <section className="py-24 px-6" style={{ backgroundColor: 'var(--bg)' }}>
       <div className="max-w-5xl mx-auto">
 
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
-            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>LO QUE OFRECEMOS</span>
-            <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
+        {/* Header + Intro */}
+        <div ref={topRef} className="reveal">
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
+              <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>LO QUE OFRECEMOS</span>
+              <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
+            </div>
+            <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>
+              Nuestra propuesta
+            </h2>
           </div>
-          <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>
-            Nuestra propuesta
-          </h2>
+          <p className="text-center text-base leading-relaxed max-w-2xl mx-auto mb-16" style={{ color: 'var(--muted)' }}>
+            En Little Claire Bakery creemos en los sabores honestos, en los platos bien servidos
+            y en el placer de compartir. Una carta casera, cuidada y generosa.
+          </p>
         </div>
 
-        {/* Intro */}
-        <p className="text-center text-base leading-relaxed max-w-2xl mx-auto mb-16" style={{ color: 'var(--muted)' }}>
-          En Little Claire Bakery creemos en los sabores honestos, en los platos bien servidos
-          y en el placer de compartir. Una carta casera, cuidada y generosa.
-        </p>
-
         {/* Grid */}
-        <div className="grid sm:grid-cols-2 gap-px" style={{ border: '1px solid var(--border)', backgroundColor: 'var(--border)' }}>
+        <div ref={gridRef} className="grid sm:grid-cols-2 gap-px reveal-stagger" style={{ border: '1px solid var(--border)', backgroundColor: 'var(--border)' }}>
           {items.map((item) => (
             <div
               key={item.title}

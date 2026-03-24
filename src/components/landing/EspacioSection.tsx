@@ -1,10 +1,15 @@
+import { useInView } from '@/hooks/useInView'
+
 export default function EspacioSection() {
+  const headerRef = useInView()
+  const galleryRef = useInView()
+
   return (
     <section className="py-24 px-6" style={{ backgroundColor: 'var(--bg)' }}>
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16 reveal">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
             <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>EL ESPACIO</span>
@@ -20,7 +25,7 @@ export default function EspacioSection() {
         </div>
 
         {/* Gallery — 2 equal + 1 tall */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div ref={galleryRef} className="grid grid-cols-2 md:grid-cols-3 gap-4 reveal-stagger">
           <img
             src="/Fotos/little claire interior.png"
             alt="Interior Little Claire"

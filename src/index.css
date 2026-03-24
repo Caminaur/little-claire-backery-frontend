@@ -3,17 +3,17 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg:        #faf7f2;
-  --bg-alt:    #f2ebe0;
+  --bg:        #eeebe5;
+  --bg-alt:    #e3ded6;
   --gold:      #b98d2d;
   --gold-hover:#a07a22;
   --gold-light:#cfad5c;
-  --coffee:    #3d2b1f;
-  --muted:     #8b6b4a;
-  --card-bg:   #fffdf8;
-  --border:    #ddd0b8;
-  --cta-bg:    #3d2b1f;
-  --subtle:    #c4b49a;
+  --coffee:    #2e1f14;
+  --muted:     #6b5040;
+  --card-bg:   #f5f3ef;
+  --border:    #c8bdb0;
+  --cta-bg:    #2e1f14;
+  --subtle:    #9e8e7a;
 }
 
 .dark {
@@ -72,3 +72,76 @@ body {
 
 .admin-link { color: var(--gold); font-size: 0.875rem; }
 .admin-link:hover { text-decoration: underline; }
+
+/* ── Animations ── */
+
+/* Hero: staggered load sequence on mount (CSS keyframe, no JS) */
+@keyframes lc-fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-animate > * {
+  animation: lc-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hero-animate > *:nth-child(1) { animation-delay: 0.08s; }
+.hero-animate > *:nth-child(2) { animation-delay: 0.20s; }
+.hero-animate > *:nth-child(3) { animation-delay: 0.32s; }
+.hero-animate > *:nth-child(4) { animation-delay: 0.44s; }
+.hero-animate > *:nth-child(5) { animation-delay: 0.56s; }
+
+/* Scroll reveal: single element fades + rises when .in-view is added */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* Scroll reveal: stagger container — each direct child fades + rises in sequence */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-stagger.in-view > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.in-view > *:nth-child(1) { transition-delay: 0s;    }
+.reveal-stagger.in-view > *:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger.in-view > *:nth-child(3) { transition-delay: 0.24s; }
+.reveal-stagger.in-view > *:nth-child(4) { transition-delay: 0.36s; }
+.reveal-stagger.in-view > *:nth-child(5) { transition-delay: 0.48s; }
+.reveal-stagger.in-view > *:nth-child(6) { transition-delay: 0.60s; }
+
+/* Scroll reveal: historia section — columns slide from opposite sides */
+.reveal-duo > .from-left {
+  opacity: 0;
+  transform: translateX(-22px) translateY(16px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-duo.in-view > .from-left { opacity: 1; transform: translateX(0) translateY(0); }
+.reveal-duo > .from-right {
+  opacity: 0;
+  transform: translateX(22px) translateY(16px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0.08s;
+}
+.reveal-duo.in-view > .from-right { opacity: 1; transform: translateX(0) translateY(0); }
+
+/* Admin: page transition — plays on mount (key change remounts the element) */
+@keyframes lc-page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: lc-page-enter 0.18s ease-out both; }
+
+/* Admin: modal & dialog entrance */
+@keyframes lc-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lc-pop-up {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+.modal-backdrop { animation: lc-fade-in 0.2s ease both; }
+.modal-card     { animation: lc-pop-up  0.22s cubic-bezier(0.22, 1, 0.36, 1) both; }

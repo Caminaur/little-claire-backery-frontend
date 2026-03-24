@@ -41,7 +41,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-stone-950/55 dark:bg-stone-950/70" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
+      <div className="relative z-10 text-center px-6 max-w-2xl mx-auto hero-animate">
 
         {/* Top ornament */}
         <div className="flex items-center justify-center gap-4 mb-8">

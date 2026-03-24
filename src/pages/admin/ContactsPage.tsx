@@ -33,7 +33,24 @@ export default function ContactsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-display font-semibold mb-6" style={{ color: 'var(--coffee)' }}>Solicitudes de contacto</h1>
+      <div className="flex items-center gap-3 mb-6 mt-2">
+        {selected && (
+          <button
+            onClick={() => setSelected(null)}
+            className="md:hidden text-sm cursor-pointer"
+            style={{ color: 'var(--muted)' }}
+          >
+            ← Volver
+          </button>
+        )}
+        {!selected && (
+          <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Solicitudes de contacto</h1>
+        )}
+        {selected && (
+          <h1 className="text-lg font-display font-semibold md:hidden" style={{ color: 'var(--coffee)' }}>{selected.name}</h1>
+        )}
+        <h1 className="text-2xl font-display font-semibold hidden md:block" style={{ color: 'var(--coffee)' }}>Solicitudes de contacto</h1>
+      </div>
 
       {isLoading ? <p style={{ color: 'var(--muted)' }}>Cargando...</p> : isError ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -41,8 +58,10 @@ export default function ContactsPage() {
           <p className="text-xs text-red-500 mt-1">{(error as Error)?.message ?? 'Error desconocido'}</p>
         </div>
       ) : (
-        <div className="flex gap-6 h-[calc(100vh-200px)]">
-          <div className="w-80 flex-shrink-0 admin-card rounded-lg overflow-y-auto">
+        <div className="md:flex md:gap-4 lg:gap-6 md:h-[calc(100vh-200px)]">
+
+          {/* List — hidden on mobile when a contact is selected */}
+          <div className={`${selected ? 'hidden md:block' : 'block'} md:w-56 lg:w-72 md:flex-shrink-0 admin-card rounded-lg overflow-y-auto`}>
             {(!data || data.length === 0) && (
               <p className="p-4 text-sm" style={{ color: 'var(--subtle)' }}>Sin solicitudes</p>
             )}
@@ -74,7 +93,8 @@ export default function ContactsPage() {
             ))}
           </div>
 
-          <div className="flex-1 admin-card rounded-lg p-6 overflow-y-auto overflow-x-hidden min-w-0">
+          {/* Detail — hidden on mobile when no contact is selected */}
+          <div className={`${selected ? 'block' : 'hidden md:block'} flex-1 admin-card rounded-lg p-6 overflow-y-auto overflow-x-hidden min-w-0 mt-4 md:mt-0`}>
             {selected ? (
               <div>
                 <div className="flex items-start justify-between mb-4">

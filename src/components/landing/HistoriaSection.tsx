@@ -1,10 +1,14 @@
+import { useInView } from '@/hooks/useInView'
+
 export default function HistoriaSection() {
+  const ref = useInView()
+
   return (
     <section id="historia" className="py-24 px-6" style={{ backgroundColor: 'var(--bg)' }}>
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <div ref={ref} className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center reveal-duo">
 
         {/* Text */}
-        <div>
+        <div className="from-left">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-8" style={{ backgroundColor: 'var(--gold)' }} />
             <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>NUESTRA HISTORIA</span>
@@ -34,7 +38,7 @@ export default function HistoriaSection() {
         </div>
 
         {/* Image */}
-        <div className="relative">
+        <div className="relative from-right">
           <div
             className="absolute -inset-3 rounded-sm opacity-30"
             style={{ border: '1px solid var(--gold)' }}

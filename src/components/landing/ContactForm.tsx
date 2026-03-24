@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useInView } from '@/hooks/useInView'
 
 const empty = { name: '', email: '', phone: '', type: 'general' as 'general' | 'catering', message: '' }
 
@@ -7,6 +8,7 @@ const inputStyle = { borderColor: 'var(--border)', backgroundColor: 'var(--card-
 const labelClass = 'block text-xs tracking-widest font-medium mb-2'
 
 export default function ContactForm() {
+  const ref = useInView()
   const [form, setForm] = useState(empty)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -52,7 +54,7 @@ export default function ContactForm() {
 
   return (
     <section id="contacto" className="py-20 px-6" style={{ backgroundColor: 'var(--bg-alt)' }}>
-      <div className="max-w-xl mx-auto">
+      <div ref={ref} className="max-w-xl mx-auto reveal-stagger">
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />

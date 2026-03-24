@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getMenus } from '@/api/menus'
+import { useInView } from '@/hooks/useInView'
 
 const destacados = [
   {
@@ -20,6 +21,8 @@ const destacados = [
 ]
 
 export default function MenuDestacadosSection() {
+  const headerRef = useInView()
+  const cardsRef = useInView()
   const { data } = useQuery({
     queryKey: ['menus', 1],
     queryFn: () => getMenus(1),
@@ -32,7 +35,7 @@ export default function MenuDestacadosSection() {
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16 reveal">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
             <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>SABORES QUE INVITAN A VOLVER</span>
@@ -47,7 +50,7 @@ export default function MenuDestacadosSection() {
         </div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div ref={cardsRef} className="grid md:grid-cols-3 gap-8 mb-12 reveal-stagger">
           {destacados.map((item) => (
             <div key={item.name} className="group overflow-hidden rounded-sm cursor-pointer" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border)' }}>
               <div className="overflow-hidden h-56">

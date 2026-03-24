@@ -9,6 +9,7 @@ import type { Promotion } from '@/types'
 import Modal from '@/components/admin/Modal'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
+import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 
 const emptyPromotion: Partial<Promotion> = {
   title: '',
@@ -77,7 +78,7 @@ export default function PromotionsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 mt-2">
         <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Promociones</h1>
         <button onClick={openCreate} className="admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer">Nueva promoción</button>
       </div>
@@ -85,40 +86,42 @@ export default function PromotionsPage() {
       {isLoading ? <p style={{ color: 'var(--muted)' }}>Cargando...</p> : (
         <>
           <div className="admin-card rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="admin-table-hd">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Título</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Descuento</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Vigencia</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
-                  <th className="px-4 py-3" />
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Título</th>
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Descuento</th>
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Vigencia</th>
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
+                  <th className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {data?.data.map((promo) => (
                   <tr key={promo.id} className="admin-row">
-                    <td className="px-4 py-3 font-medium" style={{ color: 'var(--coffee)' }}>{promo.title}</td>
-                    <td className="px-4 py-3" style={{ color: 'var(--coffee)' }}>
+                    <td className="px-3 py-2 font-medium" style={{ color: 'var(--coffee)' }}>{promo.title}</td>
+                    <td className="px-3 py-2" style={{ color: 'var(--coffee)' }}>
                       {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `$${promo.discount_value}`}
                     </td>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'var(--muted)' }}>
+                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--muted)' }}>
                       {promo.starts_at ? promo.starts_at.slice(0, 10) : '—'} → {promo.ends_at ? promo.ends_at.slice(0, 10) : '—'}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2">
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${promo.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                         {promo.is_active ? 'Activa' : 'Inactiva'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right space-x-2">
+                    <td className="px-3 py-2 text-right space-x-1">
                       <button onClick={() => setDetailPromo(promo)} className="admin-link text-sm hover:underline cursor-pointer">Productos</button>
-                      <button onClick={() => openEdit(promo)} className="admin-link text-sm hover:underline cursor-pointer">Editar</button>
-                      <button onClick={() => setDeleteTarget(promo)} className="text-sm text-red-600 hover:underline cursor-pointer">Eliminar</button>
+                      <button onClick={() => openEdit(promo)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+                      <button onClick={() => setDeleteTarget(promo)} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
           <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
         </>

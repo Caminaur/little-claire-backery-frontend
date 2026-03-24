@@ -11,6 +11,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories } from '@/api/categories'
 import type { Category } from '@/types'
 import Modal from '@/components/admin/Modal'
+import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
 
@@ -38,16 +39,15 @@ function SortableCategoryRow({ cat, onEdit, onDelete, onToggleVisible }: RowProp
   return (
     <tr ref={setNodeRef} style={style} className="admin-row transition-colors">
       <td
-        className="px-3 py-3 cursor-grab select-none text-base"
+        className="px-3 py-2 cursor-grab select-none text-base"
         style={{ color: 'var(--subtle)' }}
         {...attributes}
         {...listeners}
       >
         ⠿
       </td>
-      <td className="px-4 py-3 font-medium" style={{ color: 'var(--coffee)' }}>{cat.name}</td>
-      <td className="px-4 py-3" style={{ color: 'var(--muted)' }}>{cat.position}</td>
-      <td className="px-4 py-3">
+      <td className="px-3 py-2 font-medium" style={{ color: 'var(--coffee)' }}>{cat.name}</td>
+      <td className="px-3 py-2">
         <button
           onClick={() => onToggleVisible(cat)}
           className={`px-2 py-0.5 text-xs rounded-full font-medium cursor-pointer ${
@@ -57,9 +57,9 @@ function SortableCategoryRow({ cat, onEdit, onDelete, onToggleVisible }: RowProp
           {cat.is_visible ? 'Visible' : 'Oculta'}
         </button>
       </td>
-      <td className="px-4 py-3 text-right space-x-2">
-        <button onClick={() => onEdit(cat)} className="admin-link hover:underline cursor-pointer">Editar</button>
-        <button onClick={() => onDelete(cat)} className="text-sm text-red-600 hover:underline cursor-pointer">Eliminar</button>
+      <td className="px-3 py-2 text-right space-x-1">
+        <button onClick={() => onEdit(cat)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+        <button onClick={() => onDelete(cat)} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
       </td>
     </tr>
   )
@@ -139,7 +139,7 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 mt-2">
         <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Categorías</h1>
         <button onClick={openCreate} className="admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer">
           Nueva categoría
@@ -152,14 +152,14 @@ export default function CategoriesPage() {
         <>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <div className="admin-card rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="admin-table-hd">
                   <tr>
-                    <th className="px-3 py-3 w-8" />
-                    <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Nombre</th>
-                    <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Posición</th>
-                    <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Visible</th>
-                    <th className="px-4 py-3" />
+                    <th className="px-3 py-2 w-8" />
+                    <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Nombre</th>
+                    <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Visible</th>
+                    <th className="px-3 py-2" />
                   </tr>
                 </thead>
                 <SortableContext items={ids} strategy={verticalListSortingStrategy}>
@@ -176,6 +176,7 @@ export default function CategoriesPage() {
                   </tbody>
                 </SortableContext>
               </table>
+              </div>
             </div>
             <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
           </DndContext>

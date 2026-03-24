@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { getMenus } from '@/api/menus'
+import { useInView } from '@/hooks/useInView'
 
 export default function CTAFinalSection() {
+  const ref = useInView()
   const { data } = useQuery({
     queryKey: ['menus', 1],
     queryFn: () => getMenus(1),
@@ -14,7 +16,7 @@ export default function CTAFinalSection() {
       className="py-28 px-6 text-center"
       style={{ backgroundColor: 'var(--cta-bg)' }}
     >
-      <div className="max-w-2xl mx-auto">
+      <div ref={ref} className="max-w-2xl mx-auto reveal-stagger">
 
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />

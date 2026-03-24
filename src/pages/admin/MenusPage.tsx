@@ -6,6 +6,7 @@ import type { Menu } from '@/types'
 import Modal from '@/components/admin/Modal'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
+import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 
 const emptyMenu = { name: '', description: '', is_active: true }
 
@@ -42,7 +43,7 @@ export default function MenusPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 mt-2">
         <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Menús</h1>
         <button onClick={openCreate} className="admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer">Nuevo menú</button>
       </div>
@@ -50,32 +51,34 @@ export default function MenusPage() {
       {isLoading ? <p style={{ color: 'var(--muted)' }}>Cargando...</p> : (
         <>
           <div className="admin-card rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="admin-table-hd">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Nombre</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
-                  <th className="px-4 py-3" />
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Nombre</th>
+                  <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
+                  <th className="px-3 py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {data?.data.map((menu) => (
                   <tr key={menu.id} className="admin-row transition-colors">
-                    <td className="px-4 py-3 font-medium" style={{ color: 'var(--coffee)' }}>{menu.name}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 font-medium" style={{ color: 'var(--coffee)' }}>{menu.name}</td>
+                    <td className="px-3 py-2">
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${menu.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                         {menu.is_active ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right space-x-2">
+                    <td className="px-3 py-2 text-right space-x-1">
                       <Link to={`/admin/menus/${menu.id}`} className="admin-link text-sm hover:underline">Contenido</Link>
-                      <button onClick={() => openEdit(menu)} className="admin-link text-sm hover:underline cursor-pointer">Editar</button>
-                      <button onClick={() => setDeleteTarget(menu)} className="text-sm text-red-600 hover:underline cursor-pointer">Eliminar</button>
+                      <button onClick={() => openEdit(menu)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+                      <button onClick={() => setDeleteTarget(menu)} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
           <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
         </>

@@ -6,6 +6,7 @@ import type { Product, ProductVariant } from '@/types'
 import Modal from '@/components/admin/Modal'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
+import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 
 const emptyProduct = { name: '', description: '', category_id: 0, is_active: true }
 const emptyVariant = { label: '', price: '', position: 1, is_active: true }
@@ -121,7 +122,7 @@ export default function ProductsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 mt-2">
         <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Productos</h1>
         <button onClick={openCreateProduct} className="admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer">
           Nuevo producto
@@ -143,42 +144,44 @@ export default function ProductsPage() {
                       {product.is_active ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => openCreateVariant(product)} className="admin-link text-xs hover:underline cursor-pointer">+ Variante</button>
-                    <button onClick={() => openEditProduct(product)} className="admin-link text-xs hover:underline cursor-pointer">Editar</button>
-                    <button onClick={() => setDeleteTarget({ type: 'product', item: product })} className="text-xs text-red-600 hover:underline cursor-pointer">Eliminar</button>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => openCreateVariant(product)} className="admin-link text-sm font-semibold cursor-pointer px-1.5 py-0.5 rounded hover:opacity-70" title="Agregar variante">+</button>
+                    <button onClick={() => openEditProduct(product)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+                    <button onClick={() => setDeleteTarget({ type: 'product', item: product })} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
                   </div>
                 </div>
                 {product.variants.length > 0 && (
+                  <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                        <th className="text-left px-4 py-2 text-xs font-medium" style={{ color: 'var(--muted)' }}>Variante</th>
-                        <th className="text-left px-4 py-2 text-xs font-medium" style={{ color: 'var(--muted)' }}>Precio</th>
-                        <th className="text-left px-4 py-2 text-xs font-medium" style={{ color: 'var(--muted)' }}>Pos.</th>
-                        <th className="text-left px-4 py-2 text-xs font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
-                        <th className="px-4 py-2" />
+                        <th className="text-left px-2 py-1.5 text-xs font-medium" style={{ color: 'var(--muted)' }}>Variante</th>
+                        <th className="text-left px-2 py-1.5 text-xs font-medium" style={{ color: 'var(--muted)' }}>Precio</th>
+                        <th className="text-left px-2 py-1.5 text-xs font-medium" style={{ color: 'var(--muted)' }}>Pos.</th>
+                        <th className="text-left px-2 py-1.5 text-xs font-medium" style={{ color: 'var(--muted)' }}>Estado</th>
+                        <th className="px-2 py-1.5" />
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border)]">
                       {product.variants.map((v) => (
                         <tr key={v.id} className="admin-row">
-                          <td className="px-4 py-2" style={{ color: 'var(--coffee)' }}>{v.label ?? '—'}</td>
-                          <td className="px-4 py-2" style={{ color: 'var(--coffee)' }}>${v.price}</td>
-                          <td className="px-4 py-2" style={{ color: 'var(--muted)' }}>{v.position}</td>
-                          <td className="px-4 py-2">
+                          <td className="px-2 py-1.5" style={{ color: 'var(--coffee)' }}>{v.label ?? '—'}</td>
+                          <td className="px-2 py-1.5" style={{ color: 'var(--coffee)' }}>${v.price}</td>
+                          <td className="px-2 py-1.5" style={{ color: 'var(--muted)' }}>{v.position}</td>
+                          <td className="px-2 py-1.5">
                             <span className={`px-2 py-0.5 text-xs rounded-full ${v.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                               {v.is_active ? 'Activo' : 'Inactivo'}
                             </span>
                           </td>
-                          <td className="px-4 py-2 text-right space-x-2">
-                            <button onClick={() => openEditVariant(product, v)} className="admin-link text-xs hover:underline cursor-pointer">Editar</button>
-                            <button onClick={() => setDeleteTarget({ type: 'variant', item: v })} className="text-xs text-red-600 hover:underline cursor-pointer">Eliminar</button>
+                          <td className="px-2 py-1.5 text-right space-x-1">
+                            <button onClick={() => openEditVariant(product, v)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+                            <button onClick={() => setDeleteTarget({ type: 'variant', item: v })} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 )}
               </div>
             ))}

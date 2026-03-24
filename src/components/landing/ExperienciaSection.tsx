@@ -1,3 +1,5 @@
+import { useInView } from '@/hooks/useInView'
+
 const cards = [
   {
     title: 'Ambiente con historia',
@@ -14,12 +16,15 @@ const cards = [
 ]
 
 export default function ExperienciaSection() {
+  const headerRef = useInView()
+  const cardsRef = useInView()
+
   return (
     <section className="py-24 px-6" style={{ backgroundColor: 'var(--bg-alt)' }}>
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16 reveal">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
             <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>LA EXPERIENCIA</span>
@@ -34,7 +39,7 @@ export default function ExperienciaSection() {
         </div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div ref={cardsRef} className="grid md:grid-cols-3 gap-8 reveal-stagger">
           {cards.map((card) => (
             <div
               key={card.title}

@@ -1,4 +1,5 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
@@ -27,20 +28,62 @@ function MoonIcon() {
   )
 }
 
+function MenuIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  )
+}
+
 export default function AdminLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const { dark, toggle } = useDarkMode()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   async function handleLogout() {
     await logout()
     navigate('/admin/login')
   }
 
+  function closeNav() {
+    setSidebarOpen(false)
+  }
+
   return (
     <div className="flex min-h-screen transition-colors duration-200" style={{ backgroundColor: 'var(--bg)' }}>
-      <aside className="w-64 flex flex-col" style={{ backgroundColor: 'var(--card-bg)', borderRight: '1px solid var(--border)' }}>
 
+      {/* Mobile top bar */}
+      <header
+        className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-3 px-4 h-14"
+        style={{ backgroundColor: 'var(--card-bg)', borderBottom: '1px solid var(--border)' }}
+      >
+        <button onClick={() => setSidebarOpen(true)} className="cursor-pointer" style={{ color: 'var(--muted)' }}>
+          <MenuIcon />
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="h-px w-3 shrink-0" style={{ backgroundColor: 'var(--gold)' }} />
+          <span className="text-xs tracking-[0.25em] shrink-0" style={{ color: 'var(--gold)' }}>ADMIN</span>
+          <span className="text-xs shrink-0" style={{ color: 'var(--subtle)' }}>·</span>
+          <span className="font-display text-sm font-semibold truncate" style={{ color: 'var(--coffee)' }}>Little Claire</span>
+        </div>
+      </header>
+
+      {/* Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/50"
+          onClick={closeNav}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 flex flex-col transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        style={{ backgroundColor: 'var(--card-bg)', borderRight: '1px solid var(--border)' }}
+      >
         {/* Branding */}
         <div className="p-6" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-2 mb-1">
@@ -58,6 +101,7 @@ export default function AdminLayout() {
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={closeNav}
               className={({ isActive }) =>
                 `block px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'active-nav' : 'inactive-nav'}`
               }
@@ -108,8 +152,11 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-auto">
-        <Outlet />
+      {/* Main content */}
+      <main className="flex-1 overflow-auto pt-14 md:pt-0 p-4 md:p-8 min-w-0">
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
