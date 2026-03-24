@@ -1,7 +1,7 @@
 import type { User } from '@/types'
 
-const DEMO_EMAIL = 'admin@litteclaire.com'
-const DEMO_PASSWORD = '123'
+const DEMO_EMAIL = 'admin@cafeteria.test'
+const DEMO_PASSWORD = 'admin123'
 const DEMO_USER: User = { id: 1, email: DEMO_EMAIL }
 
 export async function login(email: string, password: string) {
