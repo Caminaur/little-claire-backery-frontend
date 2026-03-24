@@ -63,7 +63,7 @@ export default function LandingPage() {
         <p className="mt-2 font-bold" style={{ color: 'var(--subtle)' }}>
           coded by{' '}
           <a
-            href="https://github.com/Caminaur"
+            href="https://julian-caminaur.tech/"
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer transition-all hover:brightness-[1.04]"
