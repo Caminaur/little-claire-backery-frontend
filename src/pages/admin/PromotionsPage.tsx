@@ -29,6 +29,7 @@ export default function PromotionsPage() {
   const [form, setForm] = useState<Partial<Promotion>>(emptyPromotion)
   const [deleteTarget, setDeleteTarget] = useState<Promotion | null>(null)
   const [addProdId, setAddProdId] = useState<number>(0)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({ queryKey: ['promotions', page], queryFn: () => getPromotions(page) })
   const { data: promoProducts } = useQuery({
@@ -40,7 +41,11 @@ export default function PromotionsPage() {
 
   const saveMutation = useMutation({
     mutationFn: () => editing ? updatePromotion(editing.id, form) : createPromotion(form),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['promotions'] }); setModal(false) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['promotions'] }); setModal(false); setSaveError(null) },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setSaveError(msg ?? 'Error al guardar la promoción')
+    },
   })
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deletePromotion(id),
@@ -56,7 +61,7 @@ export default function PromotionsPage() {
   })
 
   function openCreate() {
-    setEditing(null); setForm(emptyPromotion); setModal(true)
+    setEditing(null); setForm(emptyPromotion); setSaveError(null); setModal(true)
   }
   function openEdit(p: Promotion) {
     setEditing(p)
@@ -162,6 +167,7 @@ export default function PromotionsPage() {
             <input type="checkbox" checked={form.is_active ?? true} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="rounded" />
             Activa
           </label>
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
             <button type="submit" disabled={saveMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">

@@ -12,6 +12,8 @@ export default function ContactsPage() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['contacts'],
     queryFn: getContactRequests,
+    refetchInterval: 20 * 1000,
+    refetchIntervalInBackground: false,
   })
 
   const markReadMutation = useMutation({
@@ -62,7 +64,7 @@ export default function ContactsPage() {
             ))}
           </div>
 
-          <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 overflow-y-auto">
+          <div className="flex-1 bg-white border border-gray-200 rounded-lg p-6 overflow-y-auto overflow-x-hidden min-w-0">
             {selected ? (
               <div>
                 <div className="flex items-start justify-between mb-4">
@@ -81,7 +83,7 @@ export default function ContactsPage() {
                   </button>
                 </div>
                 {selected.message ? (
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{selected.message}</p>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap break-words">{selected.message}</p>
                 ) : (
                   <p className="text-sm text-gray-400 italic">Sin mensaje</p>
                 )}

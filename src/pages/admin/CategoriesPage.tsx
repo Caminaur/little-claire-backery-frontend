@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/categories'
+import {
+  DndContext, closestCenter, PointerSensor, useSensor, useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories } from '@/api/categories'
 import type { Category } from '@/types'
 import Modal from '@/components/admin/Modal'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
@@ -8,6 +16,55 @@ import Pagination from '@/components/admin/Pagination'
 
 const empty: Partial<Category> = { name: '', description: '', is_visible: true, position: 1 }
 
+// --- Fila sortable ---
+interface RowProps {
+  cat: Category
+  onEdit: (cat: Category) => void
+  onDelete: (cat: Category) => void
+  onToggleVisible: (cat: Category) => void
+}
+
+function SortableCategoryRow({ cat, onEdit, onDelete, onToggleVisible }: RowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cat.id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative',
+    zIndex: isDragging ? 1 : undefined,
+  }
+
+  return (
+    <tr ref={setNodeRef} style={style} className="hover:bg-gray-50 transition-colors">
+      <td
+        className="px-3 py-3 text-gray-300 hover:text-gray-500 cursor-grab select-none text-base"
+        {...attributes}
+        {...listeners}
+      >
+        ⠿
+      </td>
+      <td className="px-4 py-3 font-medium text-gray-900">{cat.name}</td>
+      <td className="px-4 py-3 text-gray-500">{cat.position}</td>
+      <td className="px-4 py-3">
+        <button
+          onClick={() => onToggleVisible(cat)}
+          className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+            cat.is_visible ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+          }`}
+        >
+          {cat.is_visible ? 'Visible' : 'Oculta'}
+        </button>
+      </td>
+      <td className="px-4 py-3 text-right space-x-2">
+        <button onClick={() => onEdit(cat)} className="text-sm text-amber-600 hover:underline">Editar</button>
+        <button onClick={() => onDelete(cat)} className="text-sm text-red-600 hover:underline">Eliminar</button>
+      </td>
+    </tr>
+  )
+}
+
+// --- Página principal ---
 export default function CategoriesPage() {
   const qc = useQueryClient()
   const [page, setPage] = useState(1)
@@ -17,34 +74,30 @@ export default function CategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
 
+  const sensors = useSensors(useSensor(PointerSensor))
+
   const { data, isLoading } = useQuery({
     queryKey: ['categories', page],
     queryFn: () => getCategories(page),
   })
 
   const saveMutation = useMutation({
-    mutationFn: () =>
-      editing ? updateCategory(editing.id, form) : createCategory(form),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['categories'] })
-      closeModal()
-    },
+    mutationFn: () => editing ? updateCategory(editing.id, form) : createCategory(form),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); closeModal() },
     onError: () => setFormError('Error al guardar'),
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteCategory(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['categories'] })
-      setDeleteTarget(null)
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); setDeleteTarget(null) },
+  })
+
+  const reorderMutation = useMutation({
+    mutationFn: (ids: number[]) => reorderCategories(ids),
   })
 
   function openCreate() {
-    setEditing(null)
-    setForm(empty)
-    setFormError(null)
-    setModalOpen(true)
+    setEditing(null); setForm(empty); setFormError(null); setModalOpen(true)
   }
 
   function openEdit(cat: Category) {
@@ -55,14 +108,33 @@ export default function CategoriesPage() {
   }
 
   function closeModal() {
-    setModalOpen(false)
-    setEditing(null)
+    setModalOpen(false); setEditing(null)
   }
 
   async function toggleVisible(cat: Category) {
     await updateCategory(cat.id, { is_visible: !cat.is_visible })
     qc.invalidateQueries({ queryKey: ['categories'] })
   }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id || !data) return
+
+    const cats = data.data
+    const oldIndex = cats.findIndex(c => c.id === active.id)
+    const newIndex = cats.findIndex(c => c.id === over.id)
+    const reordered = arrayMove(cats, oldIndex, newIndex)
+
+    const snapshot = qc.getQueryData(['categories', page])
+    qc.setQueryData(['categories', page], { ...data, data: reordered })
+
+    reorderMutation.mutate(reordered.map(c => c.id), {
+      onError: () => qc.setQueryData(['categories', page], snapshot),
+      onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+    })
+  }
+
+  const ids = data?.data.map(c => c.id) ?? []
 
   return (
     <div>
@@ -77,49 +149,40 @@ export default function CategoriesPage() {
         <p className="text-gray-500">Cargando...</p>
       ) : (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="text-left px-4 py-3 font-medium text-gray-700">Nombre</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-700">Posición</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-700">Visible</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {data?.data.map((cat) => (
-                  <tr key={cat.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-900">{cat.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{cat.position}</td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => toggleVisible(cat)}
-                        className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                          cat.is_visible ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                        }`}
-                      >
-                        {cat.is_visible ? 'Visible' : 'Oculta'}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-right space-x-2">
-                      <button onClick={() => openEdit(cat)} className="text-sm text-amber-600 hover:underline">Editar</button>
-                      <button onClick={() => setDeleteTarget(cat)} className="text-sm text-red-600 hover:underline">Eliminar</button>
-                    </td>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-3 py-3 w-8" />
+                    <th className="text-left px-4 py-3 font-medium text-gray-700">Nombre</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-700">Posición</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-700">Visible</th>
+                    <th className="px-4 py-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
+                </thead>
+                <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+                  <tbody className="divide-y divide-gray-100">
+                    {data?.data.map((cat) => (
+                      <SortableCategoryRow
+                        key={cat.id}
+                        cat={cat}
+                        onEdit={openEdit}
+                        onDelete={setDeleteTarget}
+                        onToggleVisible={toggleVisible}
+                      />
+                    ))}
+                  </tbody>
+                </SortableContext>
+              </table>
+            </div>
+            <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
+          </DndContext>
         </>
       )}
 
       <Modal open={modalOpen} title={editing ? 'Editar categoría' : 'Nueva categoría'} onClose={closeModal}>
-        <form
-          onSubmit={(e) => { e.preventDefault(); saveMutation.mutate() }}
-          className="space-y-4"
-        >
+        <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate() }} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
             <input

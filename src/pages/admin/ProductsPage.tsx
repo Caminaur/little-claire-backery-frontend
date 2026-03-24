@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getProducts, createProduct, updateProduct, deleteProduct, createVariant, updateVariant, deleteVariant } from '@/api/products'
+import { getProducts, createProduct, updateProduct, deleteProduct, createVariant, updateVariant, deleteVariant, getVariantImages, createVariantImage, deleteVariantImage } from '@/api/products'
 import { getCategories } from '@/api/categories'
 import type { Product, ProductVariant } from '@/types'
 import Modal from '@/components/admin/Modal'
@@ -21,6 +21,8 @@ export default function ProductsPage() {
   const [productForm, setProductForm] = useState<Partial<Product>>(emptyProduct)
   const [variantForm, setVariantForm] = useState<Partial<ProductVariant>>(emptyVariant)
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'product' | 'variant'; item: Product | ProductVariant } | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [newImageFile, setNewImageFile] = useState<File | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['products', page],
@@ -32,9 +34,35 @@ export default function ProductsPage() {
     queryFn: () => getCategories(1),
   })
 
+  const { data: images, isLoading: imagesLoading } = useQuery({
+    queryKey: ['variant-images', selectedProduct?.id, editingVariant?.id],
+    queryFn: () => getVariantImages(selectedProduct!.id, editingVariant!.id),
+    enabled: variantModal && !!editingVariant && !!selectedProduct,
+  })
+
+  const addImageMutation = useMutation({
+    mutationFn: () => createVariantImage(selectedProduct!.id, editingVariant!.id, {
+      image: newImageFile!,
+      position: (images?.length ?? 0) + 1,
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['variant-images', selectedProduct?.id, editingVariant?.id] })
+      setNewImageFile(null)
+    },
+  })
+
+  const deleteImageMutation = useMutation({
+    mutationFn: (imageId: number) => deleteVariantImage(selectedProduct!.id, editingVariant!.id, imageId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['variant-images', selectedProduct?.id, editingVariant?.id] }),
+  })
+
   const saveProductMutation = useMutation({
     mutationFn: () => editingProduct ? updateProduct(editingProduct.id, productForm) : createProduct(productForm),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setProductModal(false) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setProductModal(false); setSaveError(null) },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setSaveError(msg ?? 'Error al guardar')
+    },
   })
 
   const deleteProductMutation = useMutation({
@@ -50,7 +78,11 @@ export default function ProductsPage() {
         ? updateVariant(selectedProduct.id, editingVariant.id, payload)
         : createVariant(selectedProduct.id, payload)
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setVariantModal(false) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setVariantModal(false); setSaveError(null) },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setSaveError(msg ?? 'Error al guardar')
+    },
   })
 
   const deleteVariantMutation = useMutation({
@@ -75,6 +107,7 @@ export default function ProductsPage() {
     setSelectedProduct(p)
     setEditingVariant(null)
     setVariantForm({ ...emptyVariant, position: (p.variants.length || 0) + 1 })
+    setNewImageFile(null)
     setVariantModal(true)
   }
 
@@ -82,6 +115,7 @@ export default function ProductsPage() {
     setSelectedProduct(p)
     setEditingVariant(v)
     setVariantForm({ label: v.label ?? '', price: v.price, position: v.position, is_active: v.is_active })
+    setNewImageFile(null)
     setVariantModal(true)
   }
 
@@ -178,6 +212,7 @@ export default function ProductsPage() {
             <input type="checkbox" checked={productForm.is_active ?? true} onChange={(e) => setProductForm({ ...productForm, is_active: e.target.checked })} className="rounded" />
             Activo
           </label>
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setProductModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
             <button type="submit" disabled={saveProductMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">
@@ -188,7 +223,7 @@ export default function ProductsPage() {
       </Modal>
 
       {/* Variant Modal */}
-      <Modal open={variantModal} title={editingVariant ? 'Editar variante' : 'Nueva variante'} onClose={() => setVariantModal(false)}>
+      <Modal open={variantModal} title={editingVariant ? 'Editar variante' : 'Nueva variante'} onClose={() => { setVariantModal(false); setNewImageFile(null) }}>
         <form onSubmit={(e) => { e.preventDefault(); saveVariantMutation.mutate() }} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Etiqueta (dejar vacío para precio único)</label>
@@ -210,6 +245,43 @@ export default function ProductsPage() {
             <input type="checkbox" checked={variantForm.is_active ?? true} onChange={(e) => setVariantForm({ ...variantForm, is_active: e.target.checked })} className="rounded" />
             Activa
           </label>
+          {editingVariant && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
+              {imagesLoading ? (
+                <p className="text-xs text-gray-400">Cargando...</p>
+              ) : (
+                <div className="space-y-2">
+                  {images?.map((img) => (
+                    <div key={img.id} className="flex items-center gap-2">
+                      <img src={img.image_url} className="w-12 h-12 object-cover rounded border border-gray-200" />
+                      <button
+                        type="button"
+                        onClick={() => deleteImageMutation.mutate(img.id)}
+                        disabled={deleteImageMutation.isPending}
+                        className="text-xs text-red-500 hover:underline ml-auto"
+                      >Eliminar</button>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setNewImageFile(e.target.files?.[0] ?? null)}
+                      className="text-sm text-gray-600 flex-1"
+                    />
+                    <button
+                      type="button"
+                      disabled={!newImageFile || addImageMutation.isPending}
+                      onClick={() => addImageMutation.mutate()}
+                      className="px-3 py-1.5 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50 whitespace-nowrap"
+                    >{addImageMutation.isPending ? 'Subiendo...' : 'Subir'}</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setVariantModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
             <button type="submit" disabled={saveVariantMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">

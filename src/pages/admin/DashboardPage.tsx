@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function DashboardPage() {
@@ -15,13 +16,13 @@ export default function DashboardPage() {
           { label: 'Promociones', path: '/admin/promotions' },
           { label: 'Contactos', path: '/admin/contacts' },
         ].map((item) => (
-          <a
+          <Link
             key={item.path}
-            href={item.path}
+            to={item.path}
             className="bg-white border border-gray-200 rounded-lg p-6 hover:border-amber-300 hover:shadow-sm transition-all"
           >
             <span className="text-base font-medium text-gray-900">{item.label}</span>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

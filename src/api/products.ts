@@ -51,8 +51,15 @@ export async function getVariantImages(productId: number, variantId: number): Pr
   return data
 }
 
-export async function createVariantImage(productId: number, variantId: number, payload: { image_url: string; position: number }): Promise<VariantImage> {
-  const { data } = await client.post<VariantImage>(`/api/products/${productId}/variants/${variantId}/images`, payload)
+export async function createVariantImage(productId: number, variantId: number, payload: { image: File; position: number }): Promise<VariantImage> {
+  const form = new FormData()
+  form.append('image', payload.image)
+  form.append('position', String(payload.position))
+  const { data } = await client.post<VariantImage>(
+    `/api/products/${productId}/variants/${variantId}/images`,
+    form,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  )
   return data
 }
 

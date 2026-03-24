@@ -16,12 +16,17 @@ export default function MenusPage() {
   const [editing, setEditing] = useState<Menu | null>(null)
   const [form, setForm] = useState<Partial<Menu>>(emptyMenu)
   const [deleteTarget, setDeleteTarget] = useState<Menu | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({ queryKey: ['menus', page], queryFn: () => getMenus(page) })
 
   const saveMutation = useMutation({
     mutationFn: () => editing ? updateMenu(editing.id, form) : createMenu(form),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['menus'] }); setMenuModal(false) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['menus'] }); setMenuModal(false); setSaveError(null) },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setSaveError(msg ?? 'Error al guardar el menú')
+    },
   })
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteMenu(id),
@@ -92,6 +97,7 @@ export default function MenusPage() {
             <input type="checkbox" checked={form.is_active ?? true} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="rounded" />
             Activo
           </label>
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setMenuModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
             <button type="submit" disabled={saveMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">

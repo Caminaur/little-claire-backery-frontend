@@ -24,3 +24,7 @@ export async function updateCategory(id: number, payload: Partial<Category>): Pr
 export async function deleteCategory(id: number): Promise<void> {
   await client.delete(`/api/categories/${id}`)
 }
+
+export async function reorderCategories(ids: number[]): Promise<void> {
+  await client.put('/api/categories/reorder', { ids })
+}

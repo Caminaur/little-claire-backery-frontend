@@ -37,6 +37,7 @@ export interface Menu {
   name: string
   description: string | null
   is_active: boolean
+  pdf_url: string | null
 }
 
 export interface Promotion {
