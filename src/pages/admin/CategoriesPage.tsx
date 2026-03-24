@@ -11,6 +11,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories } from '@/api/categories'
 import type { Category } from '@/types'
 import Modal from '@/components/admin/Modal'
+import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
 
@@ -36,29 +37,29 @@ function SortableCategoryRow({ cat, onEdit, onDelete, onToggleVisible }: RowProp
   }
 
   return (
-    <tr ref={setNodeRef} style={style} className="hover:bg-gray-50 transition-colors">
+    <tr ref={setNodeRef} style={style} className="admin-row transition-colors">
       <td
-        className="px-3 py-3 text-gray-300 hover:text-gray-500 cursor-grab select-none text-base"
+        className="px-3 py-2 cursor-grab select-none text-base"
+        style={{ color: 'var(--subtle)' }}
         {...attributes}
         {...listeners}
       >
         ⠿
       </td>
-      <td className="px-4 py-3 font-medium text-gray-900">{cat.name}</td>
-      <td className="px-4 py-3 text-gray-500">{cat.position}</td>
-      <td className="px-4 py-3">
+      <td className="px-3 py-2 font-medium" style={{ color: 'var(--coffee)' }}>{cat.name}</td>
+      <td className="px-3 py-2">
         <button
           onClick={() => onToggleVisible(cat)}
-          className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+          className={`px-2 py-0.5 text-xs rounded-full font-medium cursor-pointer ${
             cat.is_visible ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
           }`}
         >
           {cat.is_visible ? 'Visible' : 'Oculta'}
         </button>
       </td>
-      <td className="px-4 py-3 text-right space-x-2">
-        <button onClick={() => onEdit(cat)} className="text-sm text-amber-600 hover:underline">Editar</button>
-        <button onClick={() => onDelete(cat)} className="text-sm text-red-600 hover:underline">Eliminar</button>
+      <td className="px-3 py-2 text-right space-x-1">
+        <button onClick={() => onEdit(cat)} className="admin-link cursor-pointer p-1" title="Editar"><PencilIcon /></button>
+        <button onClick={() => onDelete(cat)} className="cursor-pointer p-1 text-red-400 hover:text-red-600" title="Eliminar"><TrashIcon /></button>
       </td>
     </tr>
   )
@@ -138,31 +139,31 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-stone-100">Categorías</h1>
-        <button onClick={openCreate} className="px-4 py-2 bg-amber-600 text-white text-sm rounded-md hover:bg-amber-700">
+      <div className="flex items-center justify-between mb-6 mt-2">
+        <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>Categorías</h1>
+        <button onClick={openCreate} className="admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer">
           Nueva categoría
         </button>
       </div>
 
       {isLoading ? (
-        <p className="text-gray-500">Cargando...</p>
+        <p style={{ color: 'var(--muted)' }}>Cargando...</p>
       ) : (
         <>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="admin-card rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="admin-table-hd">
                   <tr>
-                    <th className="px-3 py-3 w-8" />
-                    <th className="text-left px-4 py-3 font-medium text-gray-700">Nombre</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-700">Posición</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-700">Visible</th>
-                    <th className="px-4 py-3" />
+                    <th className="px-3 py-2 w-8" />
+                    <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Nombre</th>
+                    <th className="text-left px-3 py-2 text-sm font-medium" style={{ color: 'var(--muted)' }}>Visible</th>
+                    <th className="px-3 py-2" />
                   </tr>
                 </thead>
                 <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-[var(--border)]">
                     {data?.data.map((cat) => (
                       <SortableCategoryRow
                         key={cat.id}
@@ -175,6 +176,7 @@ export default function CategoriesPage() {
                   </tbody>
                 </SortableContext>
               </table>
+              </div>
             </div>
             <Pagination currentPage={page} lastPage={data?.meta.last_page ?? 1} onPageChange={setPage} />
           </DndContext>
@@ -184,44 +186,44 @@ export default function CategoriesPage() {
       <Modal open={modalOpen} title={editing ? 'Editar categoría' : 'Nueva categoría'} onClose={closeModal}>
         <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate() }} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <label className="admin-label block mb-1">Nombre *</label>
             <input
               required
               value={form.name ?? ''}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full rounded-md px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <label className="admin-label block mb-1">Descripción</label>
             <textarea
               value={form.description ?? ''}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full rounded-md px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">URL de imagen</label>
+            <label className="admin-label block mb-1">URL de imagen</label>
             <input
               value={form.image_url ?? ''}
               onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full rounded-md px-3 py-2 text-sm"
             />
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Posición</label>
+              <label className="admin-label block mb-1">Posición</label>
               <input
                 type="number"
                 min={1}
                 value={form.position ?? 1}
                 onChange={(e) => setForm({ ...form, position: Number(e.target.value) })}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="admin-input w-full rounded-md px-3 py-2 text-sm"
               />
             </div>
             <div className="flex items-end pb-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--coffee)' }}>
                 <input
                   type="checkbox"
                   checked={form.is_visible ?? true}
@@ -234,8 +236,8 @@ export default function CategoriesPage() {
           </div>
           {formError && <p className="text-sm text-red-600">{formError}</p>}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
-            <button type="submit" disabled={saveMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">
+            <button type="button" onClick={closeModal} className="admin-btn-secondary px-4 py-2 text-sm rounded-md cursor-pointer">Cancelar</button>
+            <button type="submit" disabled={saveMutation.isPending} className="admin-btn-primary px-4 py-2 text-sm rounded-md disabled:opacity-50 cursor-pointer">
               {saveMutation.isPending ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

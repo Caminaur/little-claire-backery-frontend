@@ -1,4 +1,10 @@
 import Hero from '@/components/landing/Hero'
+import HistoriaSection from '@/components/landing/HistoriaSection'
+import ExperienciaSection from '@/components/landing/ExperienciaSection'
+import PropuestaSection from '@/components/landing/PropuestaSection'
+import MenuDestacadosSection from '@/components/landing/MenuDestacadosSection'
+import EspacioSection from '@/components/landing/EspacioSection'
+import CTAFinalSection from '@/components/landing/CTAFinalSection'
 import ContactForm from '@/components/landing/ContactForm'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
@@ -22,18 +28,52 @@ export default function LandingPage() {
   const { dark, toggle } = useDarkMode()
 
   return (
-    <div className="min-h-screen bg-white dark:bg-stone-950 transition-colors duration-200">
+    <div>
       <button
         onClick={toggle}
         aria-label="Alternar modo oscuro"
-        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors shadow-md"
+        className="fixed top-4 right-4 z-50 p-2 shadow-md transition-colors"
+        style={{
+          backgroundColor: 'var(--card-bg)',
+          border: '1px solid var(--border)',
+          color: 'var(--muted)',
+        }}
       >
         {dark ? <SunIcon /> : <MoonIcon />}
       </button>
+
       <Hero />
+      <HistoriaSection />
+      <ExperienciaSection />
+      <PropuestaSection />
+      <MenuDestacadosSection />
+      <EspacioSection />
+      <CTAFinalSection />
       <ContactForm />
-      <footer className="py-8 text-center text-sm text-gray-400 dark:text-stone-500 border-t border-gray-100 dark:border-stone-800">
-        © {new Date().getFullYear()} Little Claire Bakery
+
+      <footer
+        className="py-8 text-center text-xs tracking-widest"
+        style={{
+          borderTop: '1px solid var(--border)',
+          color: 'var(--muted)',
+          backgroundColor: 'var(--bg)',
+        }}
+      >
+        <p>© {new Date().getFullYear()} LITTLE CLAIRE BAKERY</p>
+        <p className="mt-2 font-bold" style={{ color: 'var(--subtle)' }}>
+          coded by{' '}
+          <a
+            href="https://julian-caminaur.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer transition-all hover:brightness-[1.04]"
+            style={{ color: 'var(--muted)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
+          >
+            Caminaur
+          </a>
+        </p>
       </footer>
     </div>
   )

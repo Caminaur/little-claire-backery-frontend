@@ -1,4 +1,5 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
@@ -27,60 +28,135 @@ function MoonIcon() {
   )
 }
 
+function MenuIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  )
+}
+
 export default function AdminLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const { dark, toggle } = useDarkMode()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   async function handleLogout() {
     await logout()
     navigate('/admin/login')
   }
 
+  function closeNav() {
+    setSidebarOpen(false)
+  }
+
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-stone-950 transition-colors duration-200">
-      <aside className="w-64 bg-white dark:bg-stone-900 border-r border-gray-200 dark:border-stone-800 flex flex-col">
-        <div className="p-6 border-b border-gray-200 dark:border-stone-800">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-stone-100">Little Claire</h1>
-          <p className="text-xs text-gray-500 dark:text-stone-400 mt-1">Panel de administrador</p>
+    <div className="flex min-h-screen transition-colors duration-200" style={{ backgroundColor: 'var(--bg)' }}>
+
+      {/* Mobile top bar */}
+      <header
+        className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center gap-3 px-4 h-14"
+        style={{ backgroundColor: 'var(--card-bg)', borderBottom: '1px solid var(--border)' }}
+      >
+        <button onClick={() => setSidebarOpen(true)} className="cursor-pointer" style={{ color: 'var(--muted)' }}>
+          <MenuIcon />
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="h-px w-3 shrink-0" style={{ backgroundColor: 'var(--gold)' }} />
+          <span className="text-xs tracking-[0.25em] shrink-0" style={{ color: 'var(--gold)' }}>ADMIN</span>
+          <span className="text-xs shrink-0" style={{ color: 'var(--subtle)' }}>·</span>
+          <span className="font-display text-sm font-semibold truncate" style={{ color: 'var(--coffee)' }}>Little Claire</span>
         </div>
-        <nav className="flex-1 p-4 space-y-1">
+      </header>
+
+      {/* Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/50"
+          onClick={closeNav}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 flex flex-col transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        style={{ backgroundColor: 'var(--card-bg)', borderRight: '1px solid var(--border)' }}
+      >
+        {/* Branding */}
+        <div className="p-6" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-px w-4" style={{ backgroundColor: 'var(--gold)' }} />
+            <span className="text-xs tracking-[0.25em]" style={{ color: 'var(--gold)' }}>ADMIN</span>
+          </div>
+          <h1 className="font-display text-xl font-semibold" style={{ color: 'var(--coffee)' }}>Little Claire</h1>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Panel de administrador</p>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 p-3 space-y-0.5">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
+              onClick={closeNav}
               className={({ isActive }) =>
-                `block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 hover:text-gray-900 dark:hover:text-stone-100'
-                }`
+                `block px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'active-nav' : 'inactive-nav'}`
               }
+              style={({ isActive }) => isActive
+                ? { color: 'var(--gold)', backgroundColor: 'var(--bg-alt)' }
+                : { color: 'var(--muted)' }
+              }
+              onMouseEnter={e => {
+                if (!(e.currentTarget as HTMLElement).style.color.includes('var(--gold)')) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--bg-alt)'
+                  ;(e.currentTarget as HTMLElement).style.color = 'var(--coffee)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!(e.currentTarget as HTMLElement).style.color.includes('var(--gold)')) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
+                  ;(e.currentTarget as HTMLElement).style.color = 'var(--muted)'
+                }
+              }}
             >
               {item.label}
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-200 dark:border-stone-800 space-y-2">
+
+        {/* Footer */}
+        <div className="p-3 space-y-1" style={{ borderTop: '1px solid var(--border)' }}>
           <button
             onClick={toggle}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors cursor-pointer"
+            style={{ color: 'var(--muted)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-alt)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             {dark ? <SunIcon /> : <MoonIcon />}
             {dark ? 'Modo claro' : 'Modo oscuro'}
           </button>
-          <p className="text-xs text-gray-500 dark:text-stone-500 truncate px-1">{user?.email}</p>
+          <p className="text-xs truncate px-3" style={{ color: 'var(--muted)' }}>{user?.email}</p>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors"
+            className="w-full text-left px-3 py-2 text-sm transition-colors cursor-pointer"
+            style={{ color: 'var(--muted)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-alt)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             Cerrar sesión
           </button>
         </div>
       </aside>
-      <main className="flex-1 p-8 overflow-auto">
-        <Outlet />
+
+      {/* Main content */}
+      <main className="flex-1 overflow-auto pt-14 md:pt-0 p-4 md:p-8 min-w-0">
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

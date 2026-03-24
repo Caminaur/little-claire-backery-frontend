@@ -33,38 +33,49 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-gray-900 mb-6 text-center">Little Claire · Admin</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg)' }}>
+      <div className="w-full max-w-sm p-8 admin-card">
+
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-px w-6" style={{ backgroundColor: 'var(--gold)' }} />
+            <span className="text-xs tracking-[0.3em]" style={{ color: 'var(--gold)' }}>ADMIN</span>
+            <div className="h-px w-6" style={{ backgroundColor: 'var(--gold)' }} />
+          </div>
+          <h1 className="font-display text-3xl font-semibold" style={{ color: 'var(--coffee)' }}>
+            Little Claire Bakery
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="admin-label">EMAIL</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full px-3 py-2.5 text-sm"
               placeholder="admin@example.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <label className="admin-label">CONTRASEÑA</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full px-3 py-2.5 text-sm"
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 text-white rounded-md py-2 text-sm font-medium hover:bg-amber-700 disabled:opacity-50 transition-colors"
+            className="admin-btn-primary w-full py-2.5 text-sm tracking-widest font-medium cursor-pointer"
           >
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            {loading ? 'INICIANDO...' : 'INICIAR SESIÓN'}
           </button>
         </form>
       </div>
