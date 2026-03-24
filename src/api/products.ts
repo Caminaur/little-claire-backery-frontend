@@ -1,9 +1,9 @@
 import client from './client'
 import type { Product, ProductVariant, VariantImage, PaginatedResponse } from '@/types'
+import staticProducts from '@/data/products.json'
 
-export async function getProducts(page = 1): Promise<PaginatedResponse<Product>> {
-  const { data } = await client.get<PaginatedResponse<Product>>('/api/products', { params: { page } })
-  return data
+export async function getProducts(_page = 1): Promise<PaginatedResponse<Product>> {
+  return staticProducts as PaginatedResponse<Product>
 }
 
 export async function getProduct(id: number): Promise<Product> {

@@ -1,5 +1,6 @@
 import client from './client'
 import type { ContactRequest } from '@/types'
+import staticContacts from '@/data/contacts.json'
 
 export interface ContactRequestPayload {
   name: string
@@ -15,8 +16,7 @@ export async function createContactRequest(payload: ContactRequestPayload): Prom
 }
 
 export async function getContactRequests(): Promise<ContactRequest[]> {
-  const { data } = await client.get<ContactRequest[]>('/api/contact-requests')
-  return data
+  return staticContacts as ContactRequest[]
 }
 
 export async function getContactRequest(id: number): Promise<ContactRequest> {

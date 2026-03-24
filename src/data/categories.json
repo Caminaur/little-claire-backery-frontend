@@ -1,0 +1,10 @@
+{
+  "data": [
+    { "id": 1, "name": "Cafés", "description": "Nuestra selección de cafés de especialidad", "image_url": null, "is_visible": true, "position": 1 },
+    { "id": 2, "name": "Pastelería", "description": "Tortas, facturas y dulces artesanales", "image_url": null, "is_visible": true, "position": 2 },
+    { "id": 3, "name": "Brunch y Desayunos", "description": "Para empezar el día con energía", "image_url": null, "is_visible": true, "position": 3 },
+    { "id": 4, "name": "Para Compartir", "description": "Tablas y opciones para disfrutar en grupo", "image_url": null, "is_visible": true, "position": 4 }
+  ],
+  "links": { "first": null, "last": null, "prev": null, "next": null },
+  "meta": { "current_page": 1, "last_page": 1, "per_page": 15, "total": 4 }
+}

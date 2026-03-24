@@ -1,9 +1,9 @@
 import client from './client'
 import type { Category, PaginatedResponse } from '@/types'
+import staticCategories from '@/data/categories.json'
 
-export async function getCategories(page = 1): Promise<PaginatedResponse<Category>> {
-  const { data } = await client.get<PaginatedResponse<Category>>('/api/categories', { params: { page } })
-  return data
+export async function getCategories(_page = 1): Promise<PaginatedResponse<Category>> {
+  return staticCategories as PaginatedResponse<Category>
 }
 
 export async function getCategory(id: number): Promise<Category> {

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "María González",
+    "email": "maria.gonzalez@gmail.com",
+    "phone": "11 4523 7890",
+    "message": "Hola! Quisiera saber si tienen servicio de catering para eventos pequeños. Estamos organizando un cumpleaños de 20 personas y nos gustaría contar con sus opciones de pastelería y cafés.",
+    "type": "catering",
+    "is_read": false
+  },
+  {
+    "id": 2,
+    "name": "Lucas Martínez",
+    "email": "lucas.m@hotmail.com",
+    "phone": "11 6712 3344",
+    "message": "Buenas tardes, quería consultar el horario de apertura los fines de semana. Muchas gracias.",
+    "type": "general",
+    "is_read": true
+  }
+]
