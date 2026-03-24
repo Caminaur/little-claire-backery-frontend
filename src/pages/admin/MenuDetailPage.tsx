@@ -119,7 +119,7 @@ export default function MenuDetailPage() {
     }
   }
 
-  if (menuLoading) return <p className="text-gray-500 dark:text-stone-400">Cargando...</p>
+  if (menuLoading) return <p style={{ color: 'var(--muted)' }}>Cargando...</p>
   if (!menu) return <p className="text-red-500">Menú no encontrado.</p>
 
   return (
@@ -128,15 +128,16 @@ export default function MenuDetailPage() {
       <div className="mb-6">
         <Link
           to="/admin/menus"
-          className="text-sm text-gray-500 dark:text-stone-400 hover:text-gray-800 dark:hover:text-stone-200 inline-flex items-center gap-1 mb-3"
+          className="text-sm inline-flex items-center gap-1 mb-3 hover:underline"
+          style={{ color: 'var(--muted)' }}
         >
           ← Volver a Menús
         </Link>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-stone-100">{menu.name}</h1>
+            <h1 className="text-2xl font-display font-semibold" style={{ color: 'var(--coffee)' }}>{menu.name}</h1>
             {menu.description && (
-              <p className="text-sm text-gray-500 dark:text-stone-400 mt-1">{menu.description}</p>
+              <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>{menu.description}</p>
             )}
             <span className={`mt-2 inline-block px-2 py-0.5 text-xs rounded-full font-medium ${menu.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
               {menu.is_active ? 'Activo' : 'Inactivo'}
@@ -144,7 +145,7 @@ export default function MenuDetailPage() {
           </div>
           <button
             onClick={openEdit}
-            className="flex-shrink-0 px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700"
+            className="flex-shrink-0 admin-btn-primary px-4 py-2 text-sm rounded-md cursor-pointer"
           >
             Editar menú
           </button>
@@ -154,7 +155,7 @@ export default function MenuDetailPage() {
       {/* Category sections */}
       <div className="space-y-4">
         {menuCategories?.length === 0 && (
-          <p className="text-sm text-gray-400 dark:text-stone-500 italic">Sin categorías asignadas. Agregá una abajo.</p>
+          <p className="text-sm italic" style={{ color: 'var(--subtle)' }}>Sin categorías asignadas. Agregá una abajo.</p>
         )}
 
         {menuCategories?.map((cat, catIndex) => {
@@ -165,53 +166,60 @@ export default function MenuDetailPage() {
           const addProdId = addProdIds[cat.id] ?? 0
 
           return (
-            <div key={cat.id} className="bg-white dark:bg-stone-900 border border-gray-200 dark:border-stone-700 rounded-lg overflow-hidden">
+            <div key={cat.id} className="admin-card rounded-lg overflow-hidden">
               {/* Category header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-900/40">
-                <h3 className="font-medium text-amber-900 dark:text-amber-300">{cat.name}</h3>
+              <div
+                className="flex items-center justify-between px-4 py-3"
+                style={{ backgroundColor: 'var(--bg-alt)', borderBottom: '1px solid var(--border)' }}
+              >
+                <h3 className="font-medium" style={{ color: 'var(--gold)' }}>{cat.name}</h3>
                 <div className="flex items-center gap-0.5">
                   <button
                     disabled={catIndex === 0}
                     onClick={() => moveCategory(catIndex, -1)}
-                    className="px-2 py-1 text-gray-500 dark:text-stone-400 hover:text-gray-800 dark:hover:text-stone-100 disabled:opacity-30"
+                    className="px-2 py-1 disabled:opacity-30 cursor-pointer"
+                    style={{ color: 'var(--muted)' }}
                   >↑</button>
                   <button
                     disabled={catIndex === (menuCategories?.length ?? 0) - 1}
                     onClick={() => moveCategory(catIndex, 1)}
-                    className="px-2 py-1 text-gray-500 dark:text-stone-400 hover:text-gray-800 dark:hover:text-stone-100 disabled:opacity-30"
+                    className="px-2 py-1 disabled:opacity-30 cursor-pointer"
+                    style={{ color: 'var(--muted)' }}
                   >↓</button>
                   <button
                     onClick={() => setRemoveCatTarget(cat)}
-                    className="ml-2 px-2 py-1 text-red-400 hover:text-red-600"
+                    className="ml-2 px-2 py-1 text-red-400 hover:text-red-600 cursor-pointer"
                   >×</button>
                 </div>
               </div>
 
               {/* Products in this category */}
-              <div className="divide-y divide-gray-100 dark:divide-stone-800">
+              <div className="divide-y divide-[var(--border)]">
                 {catProds.length === 0 ? (
-                  <p className="px-4 py-3 text-sm text-gray-400 dark:text-stone-500 italic">Sin productos en esta categoría</p>
+                  <p className="px-4 py-3 text-sm italic" style={{ color: 'var(--subtle)' }}>Sin productos en esta categoría</p>
                 ) : (
                   catProds.map((prod, prodIndex) => (
                     <div
                       key={prod.id}
-                      className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors"
+                      className="flex items-center justify-between px-4 py-2.5 admin-row transition-colors"
                     >
-                      <span className="text-sm text-gray-800 dark:text-stone-200">{prod.name}</span>
+                      <span className="text-sm" style={{ color: 'var(--coffee)' }}>{prod.name}</span>
                       <div className="flex items-center gap-0.5">
                         <button
                           disabled={prodIndex === 0}
                           onClick={() => moveProduct(catProds, prodIndex, -1)}
-                          className="px-2 py-1 text-gray-400 hover:text-gray-700 dark:hover:text-stone-200 disabled:opacity-30 text-sm"
+                          className="px-2 py-1 disabled:opacity-30 text-sm cursor-pointer"
+                          style={{ color: 'var(--muted)' }}
                         >↑</button>
                         <button
                           disabled={prodIndex === catProds.length - 1}
                           onClick={() => moveProduct(catProds, prodIndex, 1)}
-                          className="px-2 py-1 text-gray-400 hover:text-gray-700 dark:hover:text-stone-200 disabled:opacity-30 text-sm"
+                          className="px-2 py-1 disabled:opacity-30 text-sm cursor-pointer"
+                          style={{ color: 'var(--muted)' }}
                         >↓</button>
                         <button
                           onClick={() => setRemoveProdTarget(prod)}
-                          className="ml-2 px-2 py-1 text-red-400 hover:text-red-600 text-sm"
+                          className="ml-2 px-2 py-1 text-red-400 hover:text-red-600 text-sm cursor-pointer"
                         >×</button>
                       </div>
                     </div>
@@ -220,11 +228,11 @@ export default function MenuDetailPage() {
 
                 {/* Add product from this category */}
                 {availableProds.length > 0 && (
-                  <div className="flex gap-2 px-4 py-3 bg-gray-50 dark:bg-stone-800/40">
+                  <div className="flex gap-2 px-4 py-3" style={{ backgroundColor: 'var(--bg-alt)' }}>
                     <select
                       value={addProdId}
                       onChange={(e) => setAddProdIds({ ...addProdIds, [cat.id]: Number(e.target.value) })}
-                      className="flex-1 border border-gray-300 dark:border-stone-600 rounded px-2 py-1.5 text-sm bg-white dark:bg-stone-800 text-gray-900 dark:text-stone-100"
+                      className="admin-input flex-1 rounded px-2 py-1.5 text-sm cursor-pointer"
                     >
                       <option value={0}>Agregar producto de esta categoría...</option>
                       {availableProds.map((p) => (
@@ -239,7 +247,7 @@ export default function MenuDetailPage() {
                           setAddProdIds({ ...addProdIds, [cat.id]: 0 })
                         }
                       }}
-                      className="px-3 py-1.5 text-sm bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
+                      className="admin-btn-primary px-3 py-1.5 text-sm rounded disabled:opacity-50 cursor-pointer"
                     >
                       Agregar
                     </button>
@@ -252,17 +260,17 @@ export default function MenuDetailPage() {
 
         {/* Products with no matching menu category */}
         {uncategorizedProducts.length > 0 && (
-          <div className="bg-white dark:bg-stone-900 border border-gray-200 dark:border-stone-700 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 dark:bg-stone-800 border-b border-gray-200 dark:border-stone-700">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-stone-400">Sin categoría asignada al menú</h3>
+          <div className="admin-card rounded-lg overflow-hidden">
+            <div className="px-4 py-3 admin-table-hd">
+              <h3 className="text-sm font-medium" style={{ color: 'var(--muted)' }}>Sin categoría asignada al menú</h3>
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-stone-800">
+            <div className="divide-y divide-[var(--border)]">
               {uncategorizedProducts.map((prod) => (
-                <div key={prod.id} className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-stone-800">
-                  <span className="text-sm text-gray-800 dark:text-stone-200">{prod.name}</span>
+                <div key={prod.id} className="flex items-center justify-between px-4 py-2.5 admin-row">
+                  <span className="text-sm" style={{ color: 'var(--coffee)' }}>{prod.name}</span>
                   <button
                     onClick={() => setRemoveProdTarget(prod)}
-                    className="px-2 py-1 text-red-400 hover:text-red-600 text-sm"
+                    className="px-2 py-1 text-red-400 hover:text-red-600 text-sm cursor-pointer"
                   >×</button>
                 </div>
               ))}
@@ -275,7 +283,7 @@ export default function MenuDetailPage() {
           <select
             value={addCatId}
             onChange={(e) => setAddCatId(Number(e.target.value))}
-            className="flex-1 border border-gray-300 dark:border-stone-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-stone-800 text-gray-900 dark:text-stone-100"
+            className="admin-input flex-1 rounded-md px-3 py-2 text-sm cursor-pointer"
           >
             <option value={0}>Agregar categoría al menú...</option>
             {allCategories?.data.filter((c) => !assignedCatIds.has(c.id)).map((c) => (
@@ -285,7 +293,7 @@ export default function MenuDetailPage() {
           <button
             disabled={!addCatId || addCatMutation.isPending}
             onClick={() => addCatId && addCatMutation.mutate({ catId: addCatId, pos: (menuCategories?.length ?? 0) + 1 })}
-            className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50"
+            className="admin-btn-primary px-4 py-2 text-sm rounded-md disabled:opacity-50 cursor-pointer"
           >
             Agregar categoría
           </button>
@@ -296,24 +304,24 @@ export default function MenuDetailPage() {
       <Modal open={editModal} title="Editar menú" onClose={() => setEditModal(false)}>
         <form onSubmit={(e) => { e.preventDefault(); updateMutation.mutate(form) }} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <label className="admin-label block mb-1">Nombre *</label>
             <input
               required
               value={form.name ?? ''}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full rounded-md px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <label className="admin-label block mb-1">Descripción</label>
             <textarea
               value={form.description ?? ''}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={2}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="admin-input w-full rounded-md px-3 py-2 text-sm"
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--coffee)' }}>
             <input
               type="checkbox"
               checked={form.is_active ?? true}
@@ -323,8 +331,8 @@ export default function MenuDetailPage() {
             Activo
           </label>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setEditModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
-            <button type="submit" disabled={updateMutation.isPending} className="px-4 py-2 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50">
+            <button type="button" onClick={() => setEditModal(false)} className="admin-btn-secondary px-4 py-2 text-sm rounded-md cursor-pointer">Cancelar</button>
+            <button type="submit" disabled={updateMutation.isPending} className="admin-btn-primary px-4 py-2 text-sm rounded-md disabled:opacity-50 cursor-pointer">
               {updateMutation.isPending ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

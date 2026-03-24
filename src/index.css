@@ -2,13 +2,73 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --bg:        #faf7f2;
+  --bg-alt:    #f2ebe0;
+  --gold:      #b98d2d;
+  --gold-hover:#a07a22;
+  --gold-light:#cfad5c;
+  --coffee:    #3d2b1f;
+  --muted:     #8b6b4a;
+  --card-bg:   #fffdf8;
+  --border:    #ddd0b8;
+  --cta-bg:    #3d2b1f;
+  --subtle:    #c4b49a;
+}
+
+.dark {
+  --bg:        #1c110a;
+  --bg-alt:    #251710;
+  --gold:      #cfad5c;
+  --gold-hover:#b99840;
+  --gold-light:#e0c87a;
+  --coffee:    #f0e8dc;
+  --muted:     #b89878;
+  --card-bg:   #2a1b10;
+  --border:    #4a3020;
+  --cta-bg:    #2a1c12;
+  --subtle:    #6a4e38;
+}
+
 body {
   margin: 0;
+  background-color: var(--bg);
+  color: var(--coffee);
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 #root {
   min-height: 100svh;
 }
+
+.font-display {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* ── Admin utilities ── */
+.admin-card        { background-color: var(--card-bg); border: 1px solid var(--border); }
+.admin-table-hd    { background-color: var(--bg-alt); border-bottom: 1px solid var(--border); }
+.admin-row:hover   { background-color: var(--bg-alt); }
+.admin-divide      { border-bottom: 1px solid var(--border); }
+
+.admin-input {
+  border: 1px solid var(--border);
+  background-color: var(--card-bg);
+  color: var(--coffee);
+}
+.admin-input:focus { outline: none; box-shadow: 0 0 0 2px var(--gold); }
+
+.admin-label { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 0.25rem; display: block; }
+
+.admin-btn-primary { background-color: var(--gold); color: white; transition: background-color 0.15s; }
+.admin-btn-primary:hover:not(:disabled) { background-color: var(--gold-hover); }
+.admin-btn-primary:disabled { opacity: 0.5; }
+
+.admin-btn-secondary { border: 1px solid var(--border); color: var(--coffee); background-color: var(--card-bg); transition: background-color 0.15s; }
+.admin-btn-secondary:hover:not(:disabled) { background-color: var(--bg-alt); }
+
+.admin-link { color: var(--gold); font-size: 0.875rem; }
+.admin-link:hover { text-decoration: underline; }

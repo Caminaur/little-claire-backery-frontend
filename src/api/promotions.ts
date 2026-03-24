@@ -1,9 +1,9 @@
 import client from './client'
 import type { Promotion, Product, PaginatedResponse } from '@/types'
+import staticPromotions from '@/data/promotions.json'
 
-export async function getPromotions(page = 1): Promise<PaginatedResponse<Promotion>> {
-  const { data } = await client.get<PaginatedResponse<Promotion>>('/api/promotions', { params: { page } })
-  return data
+export async function getPromotions(_page = 1): Promise<PaginatedResponse<Promotion>> {
+  return staticPromotions as PaginatedResponse<Promotion>
 }
 
 export async function getPromotion(id: number): Promise<Promotion> {

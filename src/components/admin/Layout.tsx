@@ -38,47 +38,76 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-stone-950 transition-colors duration-200">
-      <aside className="w-64 bg-white dark:bg-stone-900 border-r border-gray-200 dark:border-stone-800 flex flex-col">
-        <div className="p-6 border-b border-gray-200 dark:border-stone-800">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-stone-100">Little Claire</h1>
-          <p className="text-xs text-gray-500 dark:text-stone-400 mt-1">Panel de administrador</p>
+    <div className="flex min-h-screen transition-colors duration-200" style={{ backgroundColor: 'var(--bg)' }}>
+      <aside className="w-64 flex flex-col" style={{ backgroundColor: 'var(--card-bg)', borderRight: '1px solid var(--border)' }}>
+
+        {/* Branding */}
+        <div className="p-6" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-px w-4" style={{ backgroundColor: 'var(--gold)' }} />
+            <span className="text-xs tracking-[0.25em]" style={{ color: 'var(--gold)' }}>ADMIN</span>
+          </div>
+          <h1 className="font-display text-xl font-semibold" style={{ color: 'var(--coffee)' }}>Little Claire</h1>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Panel de administrador</p>
         </div>
-        <nav className="flex-1 p-4 space-y-1">
+
+        {/* Nav */}
+        <nav className="flex-1 p-3 space-y-0.5">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 hover:text-gray-900 dark:hover:text-stone-100'
-                }`
+                `block px-3 py-2 text-sm font-medium transition-colors ${isActive ? 'active-nav' : 'inactive-nav'}`
               }
+              style={({ isActive }) => isActive
+                ? { color: 'var(--gold)', backgroundColor: 'var(--bg-alt)' }
+                : { color: 'var(--muted)' }
+              }
+              onMouseEnter={e => {
+                if (!(e.currentTarget as HTMLElement).style.color.includes('var(--gold)')) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--bg-alt)'
+                  ;(e.currentTarget as HTMLElement).style.color = 'var(--coffee)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!(e.currentTarget as HTMLElement).style.color.includes('var(--gold)')) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
+                  ;(e.currentTarget as HTMLElement).style.color = 'var(--muted)'
+                }
+              }}
             >
               {item.label}
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-200 dark:border-stone-800 space-y-2">
+
+        {/* Footer */}
+        <div className="p-3 space-y-1" style={{ borderTop: '1px solid var(--border)' }}>
           <button
             onClick={toggle}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors cursor-pointer"
+            style={{ color: 'var(--muted)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-alt)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             {dark ? <SunIcon /> : <MoonIcon />}
             {dark ? 'Modo claro' : 'Modo oscuro'}
           </button>
-          <p className="text-xs text-gray-500 dark:text-stone-500 truncate px-1">{user?.email}</p>
+          <p className="text-xs truncate px-3" style={{ color: 'var(--muted)' }}>{user?.email}</p>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 dark:text-stone-400 hover:bg-gray-100 dark:hover:bg-stone-800 transition-colors"
+            className="w-full text-left px-3 py-2 text-sm transition-colors cursor-pointer"
+            style={{ color: 'var(--muted)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-alt)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             Cerrar sesión
           </button>
         </div>
       </aside>
+
       <main className="flex-1 p-8 overflow-auto">
         <Outlet />
       </main>

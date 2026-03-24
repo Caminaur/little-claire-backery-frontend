@@ -12,17 +12,17 @@ export default function Pagination({ currentPage, lastPage, onPageChange }: Prop
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+        className="admin-btn-secondary px-3 py-1 text-sm rounded disabled:opacity-50 cursor-pointer"
       >
         Anterior
       </button>
-      <span className="text-sm text-gray-600">
+      <span className="text-sm" style={{ color: 'var(--muted)' }}>
         Página {currentPage} de {lastPage}
       </span>
       <button
         disabled={currentPage === lastPage}
         onClick={() => onPageChange(currentPage + 1)}
-        className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
+        className="admin-btn-secondary px-3 py-1 text-sm rounded disabled:opacity-50 cursor-pointer"
       >
         Siguiente
       </button>

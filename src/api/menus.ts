@@ -1,9 +1,9 @@
 import client from './client'
 import type { Menu, Category, Product, PaginatedResponse } from '@/types'
+import staticMenus from '@/data/menus.json'
 
-export async function getMenus(page = 1): Promise<PaginatedResponse<Menu>> {
-  const { data } = await client.get<PaginatedResponse<Menu>>('/api/menus', { params: { page } })
-  return data
+export async function getMenus(_page = 1): Promise<PaginatedResponse<Menu>> {
+  return staticMenus as PaginatedResponse<Menu>
 }
 
 export async function getMenu(id: number): Promise<Menu> {

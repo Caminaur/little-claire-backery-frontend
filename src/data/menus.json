@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Menú Little Claire",
+      "description": null,
+      "is_active": true,
+      "pdf_url": "/menu-1.pdf"
+    }
+  ],
+  "links": { "first": null, "last": null, "prev": null, "next": null },
+  "meta": { "current_page": 1, "last_page": 1, "per_page": 15, "total": 1 }
+}

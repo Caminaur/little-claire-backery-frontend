@@ -1,16 +1,23 @@
-import client, { ensureCsrf } from './client'
 import type { User } from '@/types'
 
+const DEMO_EMAIL = 'admin@litteclaire.com'
+const DEMO_PASSWORD = '123'
+const DEMO_USER: User = { id: 1, email: DEMO_EMAIL }
+
 export async function login(email: string, password: string) {
-  await ensureCsrf()
-  await client.post('/api/admin/login', { email, password })
+  if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+    localStorage.setItem('demo_user', JSON.stringify(DEMO_USER))
+    return
+  }
+  throw { response: { data: { message: 'Credenciales incorrectas' } } }
 }
 
 export async function logout() {
-  await client.post('/api/admin/logout')
+  localStorage.removeItem('demo_user')
 }
 
 export async function me(): Promise<User> {
-  const { data } = await client.get<User>('/api/admin/me')
-  return data
+  const stored = localStorage.getItem('demo_user')
+  if (!stored) throw new Error('Not authenticated')
+  return JSON.parse(stored) as User
 }
