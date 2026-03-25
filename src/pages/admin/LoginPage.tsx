@@ -42,9 +42,11 @@ export default function LoginPage() {
             <span className="text-xs tracking-[0.3em]" style={{ color: 'var(--gold)' }}>ADMIN</span>
             <div className="h-px w-6" style={{ backgroundColor: 'var(--gold)' }} />
           </div>
-          <h1 className="font-display text-3xl font-semibold" style={{ color: 'var(--coffee)' }}>
-            Little Claire Bakery
-          </h1>
+          <a href="/" className="hover:opacity-75 transition-opacity inline-block">
+            <h1 className="font-display text-3xl font-semibold" style={{ color: 'var(--coffee)' }}>
+              Little Claire Bakery
+            </h1>
+          </a>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

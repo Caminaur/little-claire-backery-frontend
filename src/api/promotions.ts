@@ -1,39 +1,42 @@
-import client from './client'
 import type { Promotion, Product, PaginatedResponse } from '@/types'
-import staticPromotions from '@/data/promotions.json'
+import { mockPromotions, delay } from '@/mock/store'
 
 export async function getPromotions(_page = 1): Promise<PaginatedResponse<Promotion>> {
-  return staticPromotions as PaginatedResponse<Promotion>
+  await delay()
+  return mockPromotions.getAll(_page)
 }
 
 export async function getPromotion(id: number): Promise<Promotion> {
-  const { data } = await client.get<Promotion>(`/api/promotions/${id}`)
-  return data
+  await delay()
+  return mockPromotions.getById(id)
 }
 
 export async function createPromotion(payload: Partial<Promotion>): Promise<Promotion> {
-  const { data } = await client.post<Promotion>('/api/promotions', payload)
-  return data
+  await delay()
+  return mockPromotions.create(payload)
 }
 
 export async function updatePromotion(id: number, payload: Partial<Promotion>): Promise<Promotion> {
-  const { data } = await client.put<Promotion>(`/api/promotions/${id}`, payload)
-  return data
+  await delay()
+  return mockPromotions.update(id, payload)
 }
 
 export async function deletePromotion(id: number): Promise<void> {
-  await client.delete(`/api/promotions/${id}`)
+  await delay()
+  mockPromotions.delete(id)
 }
 
 export async function getPromotionProducts(promotionId: number): Promise<Product[]> {
-  const { data } = await client.get<Product[]>(`/api/promotions/${promotionId}/products`)
-  return data
+  await delay()
+  return mockPromotions.getProducts(promotionId)
 }
 
 export async function addPromotionProduct(promotionId: number, productId: number): Promise<void> {
-  await client.post(`/api/promotions/${promotionId}/products`, { product_id: productId })
+  await delay()
+  mockPromotions.addProduct(promotionId, productId)
 }
 
 export async function removePromotionProduct(promotionId: number, productId: number): Promise<void> {
-  await client.delete(`/api/promotions/${promotionId}/products/${productId}`)
+  await delay()
+  mockPromotions.removeProduct(promotionId, productId)
 }

@@ -73,7 +73,7 @@ export default function EspacioSection() {
           <FlipImage
             src="/Fotos/little claire interior.png"
             alt="Interior Little Claire"
-            gridClass="col-span-2 md:col-span-1 md:row-span-2"
+            gridClass="col-span-2 md:col-span-1"
           />
           <FlipImage
             src="/Fotos/foto cafe lindo.jpg"

@@ -1,68 +1,64 @@
-import client from './client'
 import type { Product, ProductVariant, VariantImage, PaginatedResponse } from '@/types'
-import staticProducts from '@/data/products.json'
+import { mockProducts, delay } from '@/mock/store'
 
 export async function getProducts(_page = 1): Promise<PaginatedResponse<Product>> {
-  return staticProducts as PaginatedResponse<Product>
+  await delay()
+  return mockProducts.getAll(_page)
 }
 
 export async function getProduct(id: number): Promise<Product> {
-  const { data } = await client.get<Product>(`/api/products/${id}`)
-  return data
+  await delay()
+  return mockProducts.getById(id)
 }
 
 export async function createProduct(payload: Partial<Product>): Promise<Product> {
-  const { data } = await client.post<Product>('/api/products', payload)
-  return data
+  await delay()
+  return mockProducts.create(payload)
 }
 
 export async function updateProduct(id: number, payload: Partial<Product>): Promise<Product> {
-  const { data } = await client.put<Product>(`/api/products/${id}`, payload)
-  return data
+  await delay()
+  return mockProducts.update(id, payload)
 }
 
 export async function deleteProduct(id: number): Promise<void> {
-  await client.delete(`/api/products/${id}`)
+  await delay()
+  mockProducts.delete(id)
 }
 
 // Variants
 export async function getVariants(productId: number): Promise<ProductVariant[]> {
-  const { data } = await client.get<ProductVariant[]>(`/api/products/${productId}/variants`)
-  return data
+  await delay()
+  return mockProducts.getVariants(productId)
 }
 
 export async function createVariant(productId: number, payload: Partial<ProductVariant>): Promise<ProductVariant> {
-  const { data } = await client.post<ProductVariant>(`/api/products/${productId}/variants`, payload)
-  return data
+  await delay()
+  return mockProducts.createVariant(productId, payload)
 }
 
 export async function updateVariant(productId: number, variantId: number, payload: Partial<ProductVariant>): Promise<ProductVariant> {
-  const { data } = await client.put<ProductVariant>(`/api/products/${productId}/variants/${variantId}`, payload)
-  return data
+  await delay()
+  return mockProducts.updateVariant(productId, variantId, payload)
 }
 
 export async function deleteVariant(productId: number, variantId: number): Promise<void> {
-  await client.delete(`/api/products/${productId}/variants/${variantId}`)
+  await delay()
+  mockProducts.deleteVariant(productId, variantId)
 }
 
 // Images
 export async function getVariantImages(productId: number, variantId: number): Promise<VariantImage[]> {
-  const { data } = await client.get<VariantImage[]>(`/api/products/${productId}/variants/${variantId}/images`)
-  return data
+  await delay()
+  return mockProducts.getImages(productId, variantId)
 }
 
 export async function createVariantImage(productId: number, variantId: number, payload: { image: File; position: number }): Promise<VariantImage> {
-  const form = new FormData()
-  form.append('image', payload.image)
-  form.append('position', String(payload.position))
-  const { data } = await client.post<VariantImage>(
-    `/api/products/${productId}/variants/${variantId}/images`,
-    form,
-    { headers: { 'Content-Type': 'multipart/form-data' } }
-  )
-  return data
+  await delay()
+  return mockProducts.createImage(productId, variantId, payload.image, payload.position)
 }
 
 export async function deleteVariantImage(productId: number, variantId: number, imageId: number): Promise<void> {
-  await client.delete(`/api/products/${productId}/variants/${variantId}/images/${imageId}`)
+  await delay()
+  mockProducts.deleteImage(productId, variantId, imageId)
 }

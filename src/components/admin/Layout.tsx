@@ -85,14 +85,14 @@ export default function AdminLayout() {
         style={{ backgroundColor: 'var(--card-bg)', borderRight: '1px solid var(--border)' }}
       >
         {/* Branding */}
-        <div className="p-6" style={{ borderBottom: '1px solid var(--border)' }}>
+        <a href="/" className="block p-6 hover:opacity-80 transition-opacity" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="flex items-center gap-2 mb-1">
             <div className="h-px w-4" style={{ backgroundColor: 'var(--gold)' }} />
             <span className="text-xs tracking-[0.25em]" style={{ color: 'var(--gold)' }}>ADMIN</span>
           </div>
           <h1 className="font-display text-xl font-semibold" style={{ color: 'var(--coffee)' }}>Little Claire</h1>
           <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Panel de administrador</p>
-        </div>
+        </a>
 
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-0.5">

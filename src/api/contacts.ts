@@ -1,6 +1,5 @@
-import client from './client'
 import type { ContactRequest } from '@/types'
-import staticContacts from '@/data/contacts.json'
+import { mockContacts, delay } from '@/mock/store'
 
 export interface ContactRequestPayload {
   name: string
@@ -11,24 +10,35 @@ export interface ContactRequestPayload {
 }
 
 export async function createContactRequest(payload: ContactRequestPayload): Promise<ContactRequest> {
-  const { data } = await client.post<ContactRequest>('/api/contact-requests', payload)
-  return data
+  await delay()
+  // In demo mode, just return a fake response — contact form on landing still "works"
+  return {
+    id: Date.now(),
+    name: payload.name,
+    email: payload.email,
+    phone: payload.phone,
+    message: payload.message ?? null,
+    type: payload.type,
+    is_read: false,
+  }
 }
 
 export async function getContactRequests(): Promise<ContactRequest[]> {
-  return staticContacts as ContactRequest[]
+  await delay()
+  return mockContacts.getAll()
 }
 
 export async function getContactRequest(id: number): Promise<ContactRequest> {
-  const { data } = await client.get<ContactRequest>(`/api/contact-requests/${id}`)
-  return data
+  await delay()
+  return mockContacts.getById(id)
 }
 
 export async function updateContactRequest(id: number, payload: Partial<ContactRequest>): Promise<ContactRequest> {
-  const { data } = await client.put<ContactRequest>(`/api/contact-requests/${id}`, payload)
-  return data
+  await delay()
+  return mockContacts.update(id, payload)
 }
 
 export async function deleteContactRequest(id: number): Promise<void> {
-  await client.delete(`/api/contact-requests/${id}`)
+  await delay()
+  mockContacts.delete(id)
 }
