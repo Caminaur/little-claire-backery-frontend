@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useInView } from '@/hooks/useInView'
+import { useLocale } from '@/hooks/useLocale'
 
 const HOMER = '/Fotos/foto broma torta de homero simpson.jpg'
 
@@ -43,6 +44,7 @@ function FlipImage({ src, alt, gridClass }: { src: string; alt: string; gridClas
 export default function EspacioSection() {
   const headerRef = useInView()
   const galleryRef = useInView()
+  const { t } = useLocale()
 
   return (
     <section className="py-24 px-6" style={{ backgroundColor: 'var(--bg)' }}>
@@ -52,15 +54,14 @@ export default function EspacioSection() {
         <div ref={headerRef} className="text-center mb-16 reveal">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
-            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>EL ESPACIO</span>
+            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>{t.espacio.label}</span>
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
           </div>
           <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>
-            Un espacio para quedarse
+            {t.espacio.heading}
           </h2>
           <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: 'var(--muted)' }}>
-            La calidez de la casa, su estilo clásico y la atención cercana hacen que cada visita
-            tenga algo especial.
+            {t.espacio.intro}
           </p>
         </div>
 
@@ -72,16 +73,16 @@ export default function EspacioSection() {
         >
           <FlipImage
             src="/Fotos/little claire interior.png"
-            alt="Interior Little Claire"
+            alt={t.espacio.img1Alt}
             gridClass="col-span-2 md:col-span-1"
           />
           <FlipImage
             src="/Fotos/foto cafe lindo.jpg"
-            alt="Café"
+            alt={t.espacio.img2Alt}
           />
           <FlipImage
             src="/Fotos/fotos comida.jpg"
-            alt="Comida"
+            alt={t.espacio.img3Alt}
           />
         </div>
 
