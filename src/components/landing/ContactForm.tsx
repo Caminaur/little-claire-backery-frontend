@@ -4,6 +4,7 @@ import { ensureCsrf } from '@/api/client'
 import type { AxiosError } from 'axios'
 import type { ApiError } from '@/types'
 import { useInView } from '@/hooks/useInView'
+import { useLocale } from '@/hooks/useLocale'
 
 const empty = { name: '', email: '', phone: '', type: 'general' as 'general' | 'catering', message: '' }
 
@@ -13,6 +14,7 @@ const labelClass = 'block text-xs tracking-widest font-medium mb-2'
 
 export default function ContactForm() {
   const ref = useInView()
+  const { t } = useLocale()
   const [form, setForm] = useState(empty)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -34,7 +36,7 @@ export default function ContactForm() {
       if (axiosErr.response?.data?.errors) {
         setFieldErrors(axiosErr.response.data.errors)
       } else {
-        setError(axiosErr.response?.data?.message ?? 'Error al enviar. Intenta de nuevo.')
+        setError(axiosErr.response?.data?.message ?? t.contacto.errorMsg)
       }
     } finally {
       setLoading(false)
@@ -47,13 +49,13 @@ export default function ContactForm() {
         <div className="max-w-xl mx-auto text-center p-10" style={{ border: '1px solid var(--border)', backgroundColor: 'var(--card-bg)' }}>
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-8" style={{ backgroundColor: 'var(--gold)' }} />
-            <span className="text-xs tracking-[0.3em]" style={{ color: 'var(--gold)' }}>MENSAJE ENVIADO</span>
+            <span className="text-xs tracking-[0.3em]" style={{ color: 'var(--gold)' }}>{t.contacto.successLabel}</span>
             <div className="h-px w-8" style={{ backgroundColor: 'var(--gold)' }} />
           </div>
-          <h3 className="font-display text-3xl font-semibold mb-3" style={{ color: 'var(--coffee)' }}>¡Gracias!</h3>
-          <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>Nos pondremos en contacto contigo pronto.</p>
+          <h3 className="font-display text-3xl font-semibold mb-3" style={{ color: 'var(--coffee)' }}>{t.contacto.successHeading}</h3>
+          <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>{t.contacto.successText}</p>
           <button onClick={() => setSuccess(false)} className="text-xs tracking-widest underline underline-offset-4" style={{ color: 'var(--gold)' }}>
-            Enviar otro mensaje
+            {t.contacto.successReset}
           </button>
         </div>
       </section>
@@ -66,40 +68,38 @@ export default function ContactForm() {
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
-            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>CONTACTO</span>
+            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>{t.contacto.label}</span>
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
           </div>
-          <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>Escribinos</h2>
-          <p className="mt-3 text-sm" style={{ color: 'var(--muted)' }}>
-            ¿Tenés alguna pregunta o querés hacer un pedido de catering?
-          </p>
+          <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>{t.contacto.heading}</h2>
+          <p className="mt-3 text-sm" style={{ color: 'var(--muted)' }}>{t.contacto.intro}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className={labelClass} style={{ color: 'var(--muted)' }}>NOMBRE *</label>
+            <label className={labelClass} style={{ color: 'var(--muted)' }}>{t.contacto.fields.name}</label>
             <input required name="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} style={inputStyle} />
             {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name[0]}</p>}
           </div>
           <div>
-            <label className={labelClass} style={{ color: 'var(--muted)' }}>EMAIL *</label>
+            <label className={labelClass} style={{ color: 'var(--muted)' }}>{t.contacto.fields.email}</label>
             <input required type="email" name="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} style={inputStyle} />
             {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email[0]}</p>}
           </div>
           <div>
-            <label className={labelClass} style={{ color: 'var(--muted)' }}>TELÉFONO *</label>
+            <label className={labelClass} style={{ color: 'var(--muted)' }}>{t.contacto.fields.phone}</label>
             <input required name="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} style={inputStyle} />
             {fieldErrors.phone && <p className="text-xs text-red-500 mt-1">{fieldErrors.phone[0]}</p>}
           </div>
           <div>
-            <label className={labelClass} style={{ color: 'var(--muted)' }}>TIPO DE CONSULTA *</label>
+            <label className={labelClass} style={{ color: 'var(--muted)' }}>{t.contacto.fields.type}</label>
             <select name="type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as 'general' | 'catering' })} className={inputClass} style={inputStyle}>
-              <option value="general">Consulta general</option>
-              <option value="catering">Catering / Pedido especial</option>
+              <option value="general">{t.contacto.fields.typeGeneral}</option>
+              <option value="catering">{t.contacto.fields.typeCatering}</option>
             </select>
           </div>
           <div>
-            <label className={labelClass} style={{ color: 'var(--muted)' }}>MENSAJE</label>
+            <label className={labelClass} style={{ color: 'var(--muted)' }}>{t.contacto.fields.message}</label>
             <textarea name="message" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4} className={inputClass} style={inputStyle} />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
@@ -111,7 +111,7 @@ export default function ContactForm() {
             onMouseEnter={e => !loading && (e.currentTarget.style.backgroundColor = 'var(--gold-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--gold)')}
           >
-            {loading ? 'ENVIANDO...' : 'ENVIAR MENSAJE'}
+            {loading ? t.contacto.submitting : t.contacto.submit}
           </button>
         </form>
       </div>
