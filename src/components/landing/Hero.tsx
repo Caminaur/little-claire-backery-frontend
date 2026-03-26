@@ -2,8 +2,10 @@ import { useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { getMenus } from '@/api/menus'
+import { useLocale } from '@/hooks/useLocale'
 
 export default function Hero() {
+  const { t } = useLocale()
   const { data } = useQuery({
     queryKey: ['menus', 1],
     queryFn: () => getMenus(1),
@@ -46,7 +48,7 @@ export default function Hero() {
         {/* Top ornament */}
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="h-px w-16" style={{ backgroundColor: 'var(--gold)' }} />
-          <span className="text-xs tracking-[0.35em] font-medium text-stone-300">CAFÉ · PASTELERÍA</span>
+          <span className="text-xs tracking-[0.35em] font-medium text-stone-300">{t.hero.tagline}</span>
           <div className="h-px w-16" style={{ backgroundColor: 'var(--gold)' }} />
         </div>
 
@@ -58,7 +60,7 @@ export default function Hero() {
         </h1>
 
         <p className="font-display text-xl md:text-2xl italic font-normal text-stone-200 mb-8">
-          Sabores generosos, momentos que invitan a quedarse
+          {t.hero.subtitle}
         </p>
 
         {/* Gold divider */}
@@ -80,12 +82,12 @@ export default function Hero() {
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--gold-hover)')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--gold)')}
             >
-              VER MENÚ
+              {t.hero.ctaMenu}
             </a>
           ) : (
             <span className="px-8 py-3 text-sm tracking-widest font-medium text-white cursor-not-allowed opacity-50"
               style={{ backgroundColor: 'var(--gold)' }}>
-              VER MENÚ
+              {t.hero.ctaMenu}
             </span>
           )}
           <a
@@ -95,7 +97,7 @@ export default function Hero() {
             onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.color = 'var(--gold-light)' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.color = 'white' }}
           >
-            NUESTRA HISTORIA
+            {t.hero.ctaHistory}
           </a>
         </div>
       </div>
