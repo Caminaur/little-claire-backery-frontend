@@ -1,23 +1,10 @@
 import { useInView } from '@/hooks/useInView'
-
-const cards = [
-  {
-    title: 'Ambiente con historia',
-    text: 'Una casa antigua, elegante y llena de carácter. Cada rincón tiene algo que contar.',
-  },
-  {
-    title: 'Cocina generosa',
-    text: 'Porciones abundantes, sabores honestos. Creemos en el placer de comer bien de verdad.',
-  },
-  {
-    title: 'Hecho en familia',
-    text: 'Una propuesta nacida del trabajo cercano y compartido, con el cuidado que solo da lo propio.',
-  },
-]
+import { useLocale } from '@/hooks/useLocale'
 
 export default function ExperienciaSection() {
   const headerRef = useInView()
   const cardsRef = useInView()
+  const { t } = useLocale()
 
   return (
     <section className="py-24 px-6" style={{ backgroundColor: 'var(--bg-alt)' }}>
@@ -27,20 +14,20 @@ export default function ExperienciaSection() {
         <div ref={headerRef} className="text-center mb-16 reveal">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
-            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>LA EXPERIENCIA</span>
+            <span className="text-xs tracking-[0.3em] font-medium" style={{ color: 'var(--gold)' }}>{t.experiencia.label}</span>
             <div className="h-px w-10" style={{ backgroundColor: 'var(--gold)' }} />
           </div>
           <h2 className="font-display text-5xl font-semibold" style={{ color: 'var(--coffee)' }}>
-            Little Claire
+            {t.experiencia.heading}
           </h2>
           <p className="mt-4 text-base max-w-xl mx-auto" style={{ color: 'var(--muted)' }}>
-            Cada detalle está pensado para que la visita sea más que una pausa.
+            {t.experiencia.intro}
           </p>
         </div>
 
         {/* Cards */}
         <div ref={cardsRef} className="grid md:grid-cols-3 gap-8 reveal-stagger">
-          {cards.map((card) => (
+          {t.experiencia.cards.map((card) => (
             <div
               key={card.title}
               className="p-8 rounded-sm"

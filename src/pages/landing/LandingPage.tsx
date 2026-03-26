@@ -6,7 +6,9 @@ import MenuDestacadosSection from '@/components/landing/MenuDestacadosSection'
 import EspacioSection from '@/components/landing/EspacioSection'
 import CTAFinalSection from '@/components/landing/CTAFinalSection'
 import ContactForm from '@/components/landing/ContactForm'
+import LanguageSwitcher from '@/components/landing/LanguageSwitcher'
 import { useDarkMode } from '@/hooks/useDarkMode'
+import { useLocale } from '@/hooks/useLocale'
 
 function SunIcon() {
   return (
@@ -26,9 +28,12 @@ function MoonIcon() {
 
 export default function LandingPage() {
   const { dark, toggle } = useDarkMode()
+  const { t } = useLocale()
 
   return (
     <div>
+      <LanguageSwitcher />
+
       <button
         onClick={toggle}
         aria-label="Alternar modo oscuro"
@@ -61,7 +66,7 @@ export default function LandingPage() {
       >
         <p>© {new Date().getFullYear()} LITTLE CLAIRE BAKERY</p>
         <p className="mt-2 font-bold" style={{ color: 'var(--subtle)' }}>
-          coded by{' '}
+          {t.footer.codedBy}{' '}
           <a
             href="https://julian-caminaur.tech/"
             target="_blank"
