@@ -14,6 +14,7 @@ import {
 import { getCategories, updateCategory } from '@/api/categories'
 import { getProducts } from '@/api/products'
 import type { Menu, Category, Product } from '@/types'
+import { buildProductsByCategory } from '@/utils/menuEditor'
 import Modal from '@/components/admin/Modal'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import SortableCategoryBlock from '@/components/admin/menu-editor/SortableCategoryBlock'
@@ -155,14 +156,7 @@ export default function MenuEditorPage() {
   const assignedCatIds = new Set(menuCategories?.map(c => c.id) ?? [])
   const assignedProdIds = new Set(menuProducts?.map(p => p.id) ?? [])
 
-  const productsByCategory = new Map<number, Product[]>()
-  for (const prod of menuProducts ?? []) {
-    if (assignedCatIds.has(prod.category_id)) {
-      const group = productsByCategory.get(prod.category_id) ?? []
-      group.push(prod)
-      productsByCategory.set(prod.category_id, group)
-    }
-  }
+  const productsByCategory = buildProductsByCategory(menuProducts ?? [])
 
   const catIds = menuCategories?.map(c => c.id) ?? []
 
