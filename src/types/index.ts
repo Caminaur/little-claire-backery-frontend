@@ -5,6 +5,8 @@ export interface Category {
   image_url: string | null
   is_visible: boolean
   position: number
+  price_display: 'auto' | 'price_box' | 'inline_banner'
+  is_full_width: boolean
 }
 
 export interface ProductVariant {

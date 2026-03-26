@@ -9,7 +9,7 @@ import DashboardPage from '@/pages/admin/DashboardPage'
 import CategoriesPage from '@/pages/admin/CategoriesPage'
 import ProductsPage from '@/pages/admin/ProductsPage'
 import MenusPage from '@/pages/admin/MenusPage'
-import MenuDetailPage from '@/pages/admin/MenuDetailPage'
+import MenuEditorPage from '@/pages/admin/MenuEditorPage'
 import PromotionsPage from '@/pages/admin/PromotionsPage'
 import ContactsPage from '@/pages/admin/ContactsPage'
 
@@ -48,7 +48,7 @@ export default function AppRouter() {
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="menus" element={<MenusPage />} />
-        <Route path="menus/:id" element={<MenuDetailPage />} />
+        <Route path="menus/:id" element={<MenuEditorPage />} />
         <Route path="promotions" element={<PromotionsPage />} />
         <Route path="contacts" element={<ContactsPage />} />
       </Route>
