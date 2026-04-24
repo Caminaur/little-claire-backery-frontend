@@ -25,6 +25,29 @@ export async function deleteMenu(id: number): Promise<void> {
   await client.delete(`/api/menus/${id}`)
 }
 
+export async function duplicateMenu(menuId: number): Promise<Menu> {
+  const [menu, categories, products] = await Promise.all([
+    getMenu(menuId),
+    getMenuCategories(menuId),
+    getMenuProducts(menuId),
+  ])
+
+  const copy = await createMenu({
+    name: `${menu.name} (copia)`,
+    description: menu.description,
+    is_active: false,
+  })
+
+  for (let i = 0; i < categories.length; i++) {
+    await addMenuCategory(copy.id, categories[i].id, i + 1)
+  }
+  for (let i = 0; i < products.length; i++) {
+    await addMenuProduct(copy.id, products[i].id, i + 1)
+  }
+
+  return copy
+}
+
 // Menu categories
 export async function getMenuCategories(menuId: number): Promise<Category[]> {
   const { data } = await client.get<Category[]>(`/api/menus/${menuId}/categories`)

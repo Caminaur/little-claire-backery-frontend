@@ -28,9 +28,11 @@ export interface VariantImage {
 export interface Product {
   id: number
   category_id: number
+  category_name?: string | null
   name: string
   description: string | null
   is_active: boolean
+  image_url?: string | null
   variants: ProductVariant[]
 }
 
@@ -61,6 +63,20 @@ export interface ContactRequest {
   message: string | null
   type: 'general' | 'catering'
   is_read: boolean
+}
+
+export interface EventReservation {
+  id: number
+  name: string
+  email: string
+  phone: string
+  event_date: string
+  event_time: string
+  guests_count: number
+  event_type: 'birthday' | 'corporate' | 'meeting' | 'other'
+  notes: string | null
+  is_read: boolean
+  created_at: string
 }
 
 export interface User {

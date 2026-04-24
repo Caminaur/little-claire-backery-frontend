@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface Props {
   open: boolean
@@ -10,7 +11,7 @@ interface Props {
 export default function Modal({ open, title, onClose, children }: Props) {
   if (!open) return null
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop">
       <div className="admin-card w-full mx-4 max-w-lg max-h-[90vh] flex flex-col modal-card">
         <div className="flex items-center justify-between px-6 py-4 admin-divide">
@@ -19,6 +20,7 @@ export default function Modal({ open, title, onClose, children }: Props) {
         </div>
         <div className="flex-1 overflow-y-auto p-6">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

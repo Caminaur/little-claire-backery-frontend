@@ -5,7 +5,7 @@ import PropuestaSection from "@/components/landing/PropuestaSection";
 import MenuDestacadosSection from "@/components/landing/MenuDestacadosSection";
 import EspacioSection from "@/components/landing/EspacioSection";
 import CTAFinalSection from "@/components/landing/CTAFinalSection";
-import ContactForm from "@/components/landing/ContactForm";
+import ContactSection from "@/components/landing/ContactSection";
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLocale } from "@/hooks/useLocale";
@@ -76,7 +76,7 @@ export default function LandingPage() {
       <MenuDestacadosSection />
       <EspacioSection />
       <CTAFinalSection />
-      <ContactForm />
+      <ContactSection />
 
       <footer
         className="py-8 text-center text-xs tracking-widest"

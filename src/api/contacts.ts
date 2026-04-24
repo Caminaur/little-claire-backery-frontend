@@ -5,7 +5,6 @@ export interface ContactRequestPayload {
   name: string
   email: string
   phone: string
-  type: 'general' | 'catering'
   message?: string
 }
 

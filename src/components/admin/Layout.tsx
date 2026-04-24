@@ -10,6 +10,7 @@ const navItems = [
   { to: '/admin/menus', label: 'Menús' },
   { to: '/admin/promotions', label: 'Promociones' },
   { to: '/admin/contacts', label: 'Contactos' },
+  { to: '/admin/reservations', label: 'Reservas' },
 ]
 
 function SunIcon() {
@@ -153,7 +154,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto pt-14 md:pt-0 p-4 md:p-8 min-w-0">
+      <main className="flex-1 overflow-auto pt-14 p-4 md:px-8 md:py-10 min-w-0">
         <div key={location.pathname} className="page-enter">
           <Outlet />
         </div>

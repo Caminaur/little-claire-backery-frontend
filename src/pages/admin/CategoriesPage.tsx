@@ -8,7 +8,7 @@ import {
   SortableContext, verticalListSortingStrategy, useSortable, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories } from '@/api/categories'
+import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories, uploadCategoryImage } from '@/api/categories'
 import type { Category } from '@/types'
 import Modal from '@/components/admin/Modal'
 import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
@@ -74,6 +74,7 @@ export default function CategoriesPage() {
   const [form, setForm] = useState<Partial<Category>>(empty)
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
+  const [categoryImageFile, setCategoryImageFile] = useState<File | null>(null)
 
   const sensors = useSensors(useSensor(PointerSensor))
 
@@ -83,7 +84,13 @@ export default function CategoriesPage() {
   })
 
   const saveMutation = useMutation({
-    mutationFn: () => editing ? updateCategory(editing.id, form) : createCategory(form),
+    mutationFn: async () => {
+      const cat = editing ? await updateCategory(editing.id, form) : await createCategory(form)
+      if (categoryImageFile) {
+        await uploadCategoryImage(cat.id, categoryImageFile)
+      }
+      return cat
+    },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); closeModal() },
     onError: () => setFormError('Error al guardar'),
   })
@@ -98,18 +105,19 @@ export default function CategoriesPage() {
   })
 
   function openCreate() {
-    setEditing(null); setForm(empty); setFormError(null); setModalOpen(true)
+    setEditing(null); setForm(empty); setFormError(null); setCategoryImageFile(null); setModalOpen(true)
   }
 
   function openEdit(cat: Category) {
     setEditing(cat)
     setForm({ name: cat.name, description: cat.description ?? '', is_visible: cat.is_visible, position: cat.position })
     setFormError(null)
+    setCategoryImageFile(null)
     setModalOpen(true)
   }
 
   function closeModal() {
-    setModalOpen(false); setEditing(null)
+    setModalOpen(false); setEditing(null); setCategoryImageFile(null)
   }
 
   async function toggleVisible(cat: Category) {
@@ -204,12 +212,25 @@ export default function CategoriesPage() {
             />
           </div>
           <div>
-            <label className="admin-label block mb-1">URL de imagen</label>
+            <label className="admin-label block mb-2">Imagen</label>
+            {(categoryImageFile
+              ? URL.createObjectURL(categoryImageFile)
+              : editing?.image_url) && (
+              <img
+                src={categoryImageFile ? URL.createObjectURL(categoryImageFile) : editing!.image_url!}
+                alt="Vista previa"
+                className="w-20 h-20 object-cover rounded mb-2"
+                style={{ border: '1px solid var(--border)' }}
+              />
+            )}
             <input
-              value={form.image_url ?? ''}
-              onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-              className="admin-input w-full rounded-md px-3 py-2 text-sm"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setCategoryImageFile(e.target.files?.[0] ?? null)}
+              className="text-sm w-full cursor-pointer"
+              style={{ color: 'var(--muted)' }}
             />
+            <p className="text-xs mt-1" style={{ color: 'var(--subtle)' }}>Máx. 4 MB.</p>
           </div>
           <div className="flex gap-4">
             <div className="flex-1">

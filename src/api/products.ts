@@ -1,9 +1,29 @@
 import client from './client'
 import type { Product, ProductVariant, VariantImage, PaginatedResponse } from '@/types'
 
-export async function getProducts(page = 1): Promise<PaginatedResponse<Product>> {
-  const { data } = await client.get<PaginatedResponse<Product>>('/api/products', { params: { page } })
+export async function getProducts(page = 1, search = ''): Promise<PaginatedResponse<Product>> {
+  const params: Record<string, string> = { page: String(page) }
+  if (search) params.search = search
+  const { data } = await client.get<PaginatedResponse<Product>>('/api/products', { params })
   return data
+}
+
+export async function uploadProductImage(id: number, file: File): Promise<Product> {
+  const form = new FormData()
+  form.append('image', file)
+  const { data } = await client.post<Product>(`/api/products/${id}/image`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
+}
+
+export async function getAllProducts(): Promise<Product[]> {
+  const first = await getProducts(1)
+  if (first.meta.last_page === 1) return first.data
+  const rest = await Promise.all(
+    Array.from({ length: first.meta.last_page - 1 }, (_, i) => getProducts(i + 2))
+  )
+  return [first.data, ...rest.map(p => p.data)].flat()
 }
 
 export async function getProduct(id: number): Promise<Product> {

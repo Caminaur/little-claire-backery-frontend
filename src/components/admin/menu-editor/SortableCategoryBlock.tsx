@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
@@ -6,6 +7,7 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import type { Category, Product } from '@/types'
+import { hasMixedPrices } from './MenuPreview'
 import SortableProductRow from './SortableProductRow'
 
 interface Props {
@@ -27,6 +29,8 @@ export default function SortableCategoryBlock({
   onAddProdChange, onAddProd, onRemoveCat, onRemoveProd,
   onProductReorder, onDisplayChange,
 }: Props) {
+  const [open, setOpen] = useState(true)
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id })
   const sensors = useSensors(useSensor(PointerSensor))
 
@@ -51,83 +55,114 @@ export default function SortableCategoryBlock({
       {/* Category header */}
       <div
         className="px-4 py-3"
-        style={{ backgroundColor: 'var(--bg-alt)', borderBottom: '1px solid var(--border)' }}
+        style={{ backgroundColor: 'var(--bg-alt)', borderBottom: open ? '1px solid var(--border)' : 'none' }}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
+            {/* Drag handle */}
             <span
-              className="cursor-grab select-none flex-shrink-0 text-base"
+              className="cursor-grab select-none flex-shrink-0 text-xl"
               style={{ color: 'var(--subtle)' }}
               {...attributes}
               {...listeners}
             >⠿</span>
+
+            {/* Collapse toggle */}
+            <button
+              onClick={() => setOpen(o => !o)}
+              className="flex-shrink-0 cursor-pointer select-none"
+              style={{ color: 'var(--subtle)', fontSize: '0.975rem', lineHeight: 1, transition: 'transform 0.15s' }}
+              title={open ? 'Colapsar' : 'Expandir'}
+            >
+              {open ? '▼' : '▶'}
+            </button>
+
             <h3 className="font-medium truncate" style={{ color: 'var(--gold)' }}>{category.name}</h3>
+
+            {/* Product count badge when collapsed */}
+            {!open && products.length > 0 && (
+              <span
+                className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full"
+                style={{ background: 'var(--border)', color: 'var(--muted)' }}
+              >
+                {products.length}
+              </span>
+            )}
           </div>
+
           <button
             onClick={() => onRemoveCat(category)}
-            className="flex-shrink-0 px-2 py-1 text-red-400 hover:text-red-600 cursor-pointer"
+            className="flex-shrink-0 px-2 py-1 text-xl text-red-400 hover:text-red-600 cursor-pointer"
           >×</button>
         </div>
 
-        {/* Layout controls */}
-        <div className="flex flex-wrap items-center gap-3 mt-2 ml-6">
-          <select
-            value={category.price_display}
-            onChange={(e) => onDisplayChange(category.id, 'price_display', e.target.value)}
-            className="admin-input rounded px-2 py-1 text-xs cursor-pointer"
-          >
-            <option value="auto">Layout: Automático</option>
-            <option value="price_box">Precio agrupado</option>
-            <option value="inline_banner">Banner ancho completo</option>
-          </select>
-          <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none" style={{ color: 'var(--muted)' }}>
-            <input
-              type="checkbox"
-              checked={category.is_full_width}
-              onChange={(e) => onDisplayChange(category.id, 'is_full_width', e.target.checked)}
-            />
-            Ancho completo
-          </label>
-        </div>
-      </div>
-
-      {/* Products */}
-      <div className="divide-y divide-[var(--border)]">
-        {products.length === 0 ? (
-          <p className="px-4 py-3 text-sm italic" style={{ color: 'var(--subtle)' }}>Sin productos en esta categoría</p>
-        ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleProductDragEnd}>
-            <SortableContext items={products.map(p => p.id)} strategy={verticalListSortingStrategy}>
-              {products.map(prod => (
-                <SortableProductRow key={prod.id} product={prod} onRemove={onRemoveProd} />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
-
-        {/* Add product */}
-        {availableProducts.length > 0 && (
-          <div className="flex gap-2 px-4 py-3" style={{ backgroundColor: 'var(--bg-alt)' }}>
+        {/* Layout controls — only visible when open */}
+        {open && (
+          <div className="flex flex-wrap items-center gap-3 mt-2 ml-6">
             <select
-              value={addProdId}
-              onChange={(e) => onAddProdChange(category.id, Number(e.target.value))}
-              className="admin-input flex-1 rounded px-2 py-1.5 text-sm cursor-pointer"
+              value={category.price_display}
+              onChange={(e) => onDisplayChange(category.id, 'price_display', e.target.value)}
+              className="admin-input rounded px-2 py-1 text-xs cursor-pointer"
             >
-              <option value={0}>Agregar producto de esta categoría...</option>
-              {availableProducts.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
+              <option value="auto">Layout: Automático</option>
+              <option value="price_box">Precio agrupado</option>
+              <option value="individual">Precio individual</option>
+              <option value="inline_banner">Banner ancho completo</option>
             </select>
-            <button
-              disabled={!addProdId || isAddingProd}
-              onClick={() => onAddProd(category.id)}
-              className="admin-btn-primary px-3 py-1.5 text-sm rounded disabled:opacity-50 cursor-pointer"
-            >
-              Agregar
-            </button>
+            <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none" style={{ color: 'var(--muted)' }}>
+              <input
+                type="checkbox"
+                checked={category.is_full_width}
+                onChange={(e) => onDisplayChange(category.id, 'is_full_width', e.target.checked)}
+              />
+              Ancho completo
+            </label>
+            {category.price_display === 'price_box' && products.length > 0 && hasMixedPrices(products) && (
+              <span className="text-xs text-amber-600">⚠ Precios distintos — productos con mismo precio se agruparán</span>
+            )}
           </div>
         )}
       </div>
+
+      {/* Products — only visible when open */}
+      {open && (
+        <div className="divide-y divide-[var(--border)]">
+          {products.length === 0 ? (
+            <p className="px-4 py-3 text-sm italic" style={{ color: 'var(--subtle)' }}>Sin productos en esta categoría</p>
+          ) : (
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleProductDragEnd}>
+              <SortableContext items={products.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                {products.map(prod => (
+                  <SortableProductRow key={prod.id} product={prod} onRemove={onRemoveProd} />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )}
+
+          {/* Add product */}
+          {availableProducts.length > 0 && (
+            <div className="flex gap-2 px-4 py-3" style={{ backgroundColor: 'var(--bg-alt)' }}>
+              <select
+                value={addProdId}
+                onChange={(e) => onAddProdChange(category.id, Number(e.target.value))}
+                className="admin-input flex-1 rounded px-2 py-1.5 text-sm cursor-pointer"
+              >
+                <option value={0}>Agregar producto de esta categoría...</option>
+                {availableProducts.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+              <button
+                disabled={!addProdId || isAddingProd}
+                onClick={() => onAddProd(category.id)}
+                className="admin-btn-primary px-3 py-1.5 text-sm rounded disabled:opacity-50 cursor-pointer"
+              >
+                Agregar
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

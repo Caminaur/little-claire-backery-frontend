@@ -12,6 +12,7 @@ import MenusPage from '@/pages/admin/MenusPage'
 import MenuEditorPage from '@/pages/admin/MenuEditorPage'
 import PromotionsPage from '@/pages/admin/PromotionsPage'
 import ContactsPage from '@/pages/admin/ContactsPage'
+import ReservationsPage from '@/pages/admin/ReservationsPage'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth()
@@ -51,6 +52,7 @@ export default function AppRouter() {
         <Route path="menus/:id" element={<MenuEditorPage />} />
         <Route path="promotions" element={<PromotionsPage />} />
         <Route path="contacts" element={<ContactsPage />} />
+        <Route path="reservations" element={<ReservationsPage />} />
       </Route>
     </Routes>
   )
