@@ -113,14 +113,17 @@ export const mockProducts = {
     return JSON.parse(JSON.stringify(found))
   },
 
-  create(payload: Partial<Product>): Product {
+  create(payload: Partial<Product> & { initial_price?: string }): Product {
+    const allVariants = products.flatMap(pr => pr.variants)
     const item: ProductWithImages = {
       id: nextId(products),
       category_id: payload.category_id ?? 0,
       name: payload.name ?? '',
       description: payload.description ?? null,
       is_active: payload.is_active ?? true,
-      variants: [],
+      variants: payload.initial_price !== undefined && payload.initial_price !== ''
+        ? [{ id: nextId(allVariants), product_id: nextId(products), label: null, price: String(payload.initial_price), position: 1, is_active: true, images: [] }]
+        : [],
     }
     products.push(item)
     return JSON.parse(JSON.stringify(item))

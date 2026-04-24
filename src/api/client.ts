@@ -9,13 +9,7 @@ const client = axios.create({
   },
 })
 
-let csrfInitialized = false
-
-export async function ensureCsrf() {
-  if (!csrfInitialized) {
-    await client.get('/sanctum/csrf-cookie')
-    csrfInitialized = true
-  }
-}
+// no-op in demo mode — no real backend
+export async function ensureCsrf() {}
 
 export default client

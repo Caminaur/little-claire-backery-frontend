@@ -8,7 +8,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import Pagination from '@/components/admin/Pagination'
 import { PencilIcon, TrashIcon } from '@/components/admin/Icons'
 
-const emptyProduct = { name: '', description: '', category_id: 0, is_active: true }
+const emptyProduct = { name: '', description: '', category_id: 0, is_active: true, initial_price: '' }
 const emptyVariant = { label: '', price: '', position: 1, is_active: true }
 
 export default function ProductsPage() {
@@ -19,7 +19,7 @@ export default function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-  const [productForm, setProductForm] = useState<Partial<Product>>(emptyProduct)
+  const [productForm, setProductForm] = useState<Partial<Product> & { initial_price?: string }>(emptyProduct)
   const [variantForm, setVariantForm] = useState<Partial<ProductVariant>>(emptyVariant)
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'product' | 'variant'; item: Product | ProductVariant } | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -211,6 +211,24 @@ export default function ProductsPage() {
             <textarea value={productForm.description ?? ''} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
               rows={2} className="admin-input w-full rounded-md px-3 py-2 text-sm" />
           </div>
+          {!editingProduct && (
+            <div>
+              <label className="admin-label block mb-1">Precio inicial *</label>
+              <input
+                required
+                type="number"
+                min={0}
+                step="0.01"
+                placeholder="0.00"
+                value={productForm.initial_price ?? ''}
+                onChange={(e) => setProductForm({ ...productForm, initial_price: e.target.value })}
+                className="admin-input w-full rounded-md px-3 py-2 text-sm"
+              />
+              <p className="text-xs mt-1" style={{ color: 'var(--subtle)' }}>
+                Se crea una variante de precio único. Podés agregar más variantes después.
+              </p>
+            </div>
+          )}
           <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--coffee)' }}>
             <input type="checkbox" checked={productForm.is_active ?? true} onChange={(e) => setProductForm({ ...productForm, is_active: e.target.checked })} className="rounded" />
             Activo
